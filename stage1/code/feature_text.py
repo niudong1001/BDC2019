@@ -2,16 +2,22 @@ import os
 import argparse
 import pandas as pd
 from datetime import datetime
-from utils import dist, ngram_util
+from utils import dist_utils, ngram_utils
+from config import GLOBAL_DIR
+import sys
+sys.path.append(GLOBAL_DIR)
+from helper import ProcessChunk, ORI_TRAIN_NAMES
 
-parser = argparse.ArgumentParser(description='Exctract the pos and ner features.')
+parser = argparse.ArgumentParser(description='Exctract text features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
 parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
 args = parser.parse_args()
 if not args.file or not os.path.isfile(args.file):
+    print("Failed.")
     exit()
 if not args.save_dir or not os.path.isdir(args.save_dir):
+    print("Failed.")
     exit()
 
 
@@ -34,25 +40,25 @@ def run(df, ngram, prefix):
     return df
 
 if __name__ == '__main__':
+
+    # python feature_text.py -f "../input/train_data.csv" -p "test" -d "../output"
+    
     start_time = datetime.now()
-    df = pd.read_csv(args.file, index_col=0, dtype=str)
-    df = df.fillna('')
-    print('Lines: %d' %len(df))
+    feature = []
 
-    # df = run(df, ngram_utils.unichars, '%s_%s' % (args.prefix, 'unichars'))
-    # df = run(df, ngram_utils.bichars, '%s_%s' % (args.prefix, 'bichars'))
-    # df = run(df, ngram_utils.trichars, '%s_%s' % (args.prefix, 'trichars'))
-    df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
-    df = run(df, ngram_utils.bigrams, '%s_%s' % (args.prefix, 'bigrams'))
-    df = run(df, ngram_utils.trigrams, '%s_%s' % (args.prefix, 'trigrams'))
+    def process(df):
+        # df = run(df, ngram_utils.unichars, '%s_%s' % (args.prefix, 'unichars'))
+        # df = run(df, ngram_utils.bichars, '%s_%s' % (args.prefix, 'bichars'))
+        # df = run(df, ngram_utils.trichars, '%s_%s' % (args.prefix, 'trichars'))
+        df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
+        df = run(df, ngram_utils.bigrams, '%s_%s' % (args.prefix, 'bigrams'))
+        df = run(df, ngram_utils.trigrams, '%s_%s' % (args.prefix, 'trigrams'))
+        df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
+        feature.append(df)
 
-    # save
-    df.drop(['query', 'title', 'clicked'], axis=1, inplace=True, errors='ignore')
+    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=5000)
+
     save_path = os.path.join(args.save_dir, '%s_feature_text.csv' % args.prefix)
-    df.to_csv(save_path)
+    # 带了表头
+    pd.concat(feature, axis=0).to_csv(save_path, index=None)
     print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))
-
-
-
-
-        

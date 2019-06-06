@@ -6,6 +6,9 @@ import random
 import gc
 import sys
 
+ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
+ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
+
 # 计算执行某个函数需要的时间
 class Timer(object):
     """
