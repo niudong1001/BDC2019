@@ -3,32 +3,35 @@ import argparse
 import pandas as pd
 from datetime import datetime
 from utils import dist_utils, ngram_utils
-from config import GLOBAL_DIR
+import numpy as np
 import sys
-sys.path.append(GLOBAL_DIR)
-from helper import ProcessChunk, ORI_TRAIN_NAMES
+import config
+sys.path.append(config.GLOBAL_DIR)
+from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG, DEBUG_CHUNK_SIZE, CHUNK_SIZE
 
 parser = argparse.ArgumentParser(description='Exctract text features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
 parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
 args = parser.parse_args()
+
 if not args.file or not os.path.isfile(args.file):
-    print("Failed.")
+    print("Not a valid file.")
     exit()
 if not args.save_dir or not os.path.isdir(args.save_dir):
-    print("Failed.")
+    print("Not a valid dir.")
     exit()
 
 
 def run(df, ngram, prefix):
+
     # ngram
     df['q_ngram'] = df['query'].apply(ngram)
     df['t_ngram'] = df['title'].apply(ngram)
 
     ## 长度特征
-    df['%s_q-len' % prefix] = df['q_ngram'].apply(len)
-    df['%s_t-len' % prefix] = df['t_ngram'].apply(len)
+    df['%s_q-len' % prefix] = df['q_ngram'].apply(lambda x: np.log1p(len(x)))
+    df['%s_t-len' % prefix] = df['t_ngram'].apply(lambda x: np.log1p(len(x)))
 
     ## 字符集合相似度
     df['%s_dice-ratio'% prefix] = df.apply(lambda x: dist_utils.dice_ratio(x['q_ngram'], x['t_ngram']), axis=1)
@@ -37,6 +40,7 @@ def run(df, ngram, prefix):
     df['%s_edit-set-ratio'% prefix] = df.apply(lambda x: dist_utils.edit_set_ratio(x['q_ngram'], x['t_ngram']), axis=1)
 
     df.drop(['q_ngram', 't_ngram'], axis=1, inplace=True)
+
     return df
 
 if __name__ == '__main__':
@@ -55,10 +59,14 @@ if __name__ == '__main__':
         df = run(df, ngram_utils.trigrams, '%s_%s' % (args.prefix, 'trigrams'))
         df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
         feature.append(df)
+    
+    if DEBUG:
+        chunk_size = DEBUG_CHUNK_SIZE
+    else:
+        chunk_size = CHUNK_SIZE
 
-    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=5000)
+    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
 
     save_path = os.path.join(args.save_dir, '%s_feature_text.csv' % args.prefix)
-    # 带了表头
-    pd.concat(feature, axis=0).to_csv(save_path, index=None)
+    pd.concat(feature, axis=0).to_csv(save_path, index=None)  # 带表头
     print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))

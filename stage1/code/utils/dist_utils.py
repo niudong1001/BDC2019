@@ -39,8 +39,11 @@ def lzma_ratio(a, b):
     return ratio
 
 def cosine_distance(a, b):
-    dis = np.dot(a, b)/np.linalg.norm(a)/np.linalg.norm(b)
-    return np.nan_to_num(dis)
+    s = np.linalg.norm(a) * np.linalg.norm(b)
+    if s < 1e-6:
+        return 0.0
+    else:
+        return np.nan_to_num(np.dot(a, b)/s)
 
 
 def jaccard_distance(a, b):

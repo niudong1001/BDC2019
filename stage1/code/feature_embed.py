@@ -1,3 +1,6 @@
+import config
+import sys
+sys.path.append(config.GLOBAL_DIR)
 import os
 import gensim
 import argparse
@@ -6,10 +9,7 @@ import pandas as pd
 from datetime import datetime
 from utils import dist_utils, ngram_utils
 from scipy.stats import skew, kurtosis
-import config
-import sys
-sys.path.append(config.GLOBAL_DIR)
-from helper import ProcessChunk, ORI_TRAIN_NAMES
+from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG, DEBUG_CHUNK_SIZE, CHUNK_SIZE
 
 parser = argparse.ArgumentParser(description='Exctract embed features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
@@ -19,7 +19,7 @@ parser.add_argument('-e', '--embedding', type=str, help='embedding mode')
 args = parser.parse_args()
 
 if not args.save_dir or not os.path.isdir(args.save_dir):
-    print("Failed")
+    print("Not a valid dir.")
     exit()
 
 
@@ -46,6 +46,7 @@ def norm_wmd(s1, s2):
 
 
 def run(df, ngram, prefix):
+
     # ngram
     df['q_ngram'] = df['query'].apply(ngram)
     df['t_ngram'] = df['title'].apply(ngram)
@@ -63,7 +64,7 @@ def run(df, ngram, prefix):
     df['%s_t-kurtosis' % prefix] = df['t_ngram'].apply(lambda x :kurtosis(sent2vec(x)))
     ## 距离
     df['%s_cosine-distance' % prefix] = df.apply(lambda x: dist_utils.cosine_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
-    df['%s_jaccard-distance' % prefix] = df.apply(lambda x: dist_utils.jaccard_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
+    # df['%s_jaccard-distance' % prefix] = df.apply(lambda x: dist_utils.jaccard_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_canberra-distance' % prefix] = df.apply(lambda x: dist_utils.canberra_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_cityblock-distance' % prefix] = df.apply(lambda x: dist_utils.cityblock_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_euclidean-distance' % prefix] = df.apply(lambda x: dist_utils.euclidean_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
@@ -75,10 +76,12 @@ def run(df, ngram, prefix):
 
 if __name__ == '__main__':
 
+    # python feature_embed.py -f ../input/train_data.csv  -e word2vec -p test -d ../output  
     global model, norm_model
 
     if 'glove' in args.embedding:
-        model_file = config.GLOVE_MODEL
+        # model_file = config.GLOVE_MODEL
+        exit()
     elif 'word2vec' in args.embedding:
         model_file = config.WORD2VEC_MODEL
     else :
@@ -95,12 +98,16 @@ if __name__ == '__main__':
         df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
         df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
         feature.append(df)
+    
+    if DEBUG:
+        chunk_size = DEBUG_CHUNK_SIZE
+    else:
+        chunk_size = CHUNK_SIZE
 
-    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=10000)
+    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
 
     save_path = os.path.join(args.save_dir, '%s_feature_embed.csv' % args.prefix)
-    # 带了表头
-    pd.concat(feature, axis=0).to_csv(save_path, index=None)
+    pd.concat(feature, axis=0).to_csv(save_path, index=None) # 带表头
     print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))
 
 

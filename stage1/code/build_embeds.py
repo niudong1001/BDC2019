@@ -1,21 +1,21 @@
 import csv
-from config import INPUT_DIR,OUTPUT_DIR 
+import os
 import sys
-from config import GLOBAL_DIR
-sys.path.append(GLOBAL_DIR)
+import config
+sys.path.append(config.GLOBAL_DIR)
 from helper import Timer
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
-import os
 
-embed_sentences = OUTPUT_DIR +'/embed_sentences.txt'
-source_csv = INPUT_DIR+'/train_data.csv'
-word2vec_model = OUTPUT_DIR +'/word2vec.model'
-word2vec_kv = OUTPUT_DIR +'/word2vec.kv'
+
+embed_sentences = config.INPUT_DIR +'/embed_sentences.txt'
+source_csv = config.INPUT_DIR + '/train_data.csv'
+word2vec_model = config.OUTPUT_DIR +'/word2vec.model'
+word2vec_kv = config.OUTPUT_DIR +'/word2vec.kv'
 
 def ProcessForEmbedsInput():
     query_id = -1
-    with Timer("process for embedding train"):
+    with Timer("Process to embedding sentences"):
         with open(embed_sentences, 'w') as f:
             with open(source_csv) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
@@ -29,7 +29,7 @@ def ProcessForEmbedsInput():
                     if line_count % 5000000 == 0: 
                         print(f'Processed {line_count} lines.')
 
-class SteamSentences(object):
+class SentenceStream(object):
     def __init__(self, dirname):
         self.dirname = dirname
 
@@ -38,7 +38,7 @@ class SteamSentences(object):
             yield line.split()
 
 # a memory-friendly iterator
-sentences = SteamSentences(embed_sentences) 
+sentences = SentenceStream(embed_sentences) 
 
 with Timer("Train word2vec"):
     # https://www.cnblogs.com/pinard/p/7278324.html

@@ -8,6 +8,9 @@ import sys
 
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
 ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
+DEBUG = True
+DEBUG_CHUNK_SIZE = 5000
+CHUNK_SIZE = 5000000
 
 # 计算执行某个函数需要的时间
 class Timer(object):
