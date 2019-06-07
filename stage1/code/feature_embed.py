@@ -9,15 +9,19 @@ import pandas as pd
 from datetime import datetime
 from utils import dist_utils, ngram_utils
 from scipy.stats import skew, kurtosis
-from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG, DEBUG_CHUNK_SIZE, CHUNK_SIZE
+from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
 
 parser = argparse.ArgumentParser(description='Exctract embed features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
 parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
 parser.add_argument('-e', '--embedding', type=str, help='embedding mode')
+parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
 args = parser.parse_args()
 
+if not args.file or not os.path.isfile(args.file):
+    print("Not a valid file.")
+    exit()
 if not args.save_dir or not os.path.isdir(args.save_dir):
     print("Not a valid dir.")
     exit()
@@ -99,7 +103,7 @@ if __name__ == '__main__':
         df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
         feature.append(df)
     
-    if DEBUG:
+    if args.debug == "true":
         chunk_size = DEBUG_CHUNK_SIZE
     else:
         chunk_size = CHUNK_SIZE

@@ -5,10 +5,10 @@ import time
 import random
 import gc
 import sys
+import csv
 
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
 ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
-DEBUG = True
 DEBUG_CHUNK_SIZE = 5000
 CHUNK_SIZE = 5000000
 
@@ -81,3 +81,39 @@ def RandomSample(filename, rate, names, chunk_size=1000000, random_state=None):
     return pd.concat(chunks, ignore_index=True)
 # tmp = RandomSample(train_data_file, .5, chunk_size=5)
 # print(tmp)
+
+# Stage1
+
+def ProcessForTrainWord2vec(source_csv, embed_sentences_file):
+    query_id = -1
+    with Timer("Process csv to embedding sentences"):
+        with open(embed_sentences_file, 'w') as f:
+            with open(source_csv) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                for row in csv_reader:
+                    line_count += 1
+                    if query_id != row[0]:
+                        query_id = row[0]
+                        f.write("{0}\n".format(row[1]))
+                    f.write("{0}\n".format(row[3]))
+                    if line_count % 5000000 == 0: 
+                        print(f'Processed {line_count} lines.')
+
+def ProcessForTrainFastText(source_csv, savefile, add_label=True):
+    with Timer("Process csv to content for fastText train"):
+        with open(savefile, 'w') as f:
+            with open(source_csv) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                for row in csv_reader:
+                    line_count += 1
+                    query = row[1]
+                    title = row[3]
+                    if add_label:
+                        label = row[4]
+                        f.write("__label__{0} {1} {2}\n".format(label, query, title))
+                    else:
+                        f.write("{0} {1}\n".format(query, title))
+                    if line_count % 5000000 == 0:
+                        print(f'Processed {line_count} lines.')

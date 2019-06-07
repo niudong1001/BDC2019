@@ -7,12 +7,13 @@ import numpy as np
 import sys
 import config
 sys.path.append(config.GLOBAL_DIR)
-from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG, DEBUG_CHUNK_SIZE, CHUNK_SIZE
+from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
 
 parser = argparse.ArgumentParser(description='Exctract text features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
 parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
+parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
 args = parser.parse_args()
 
 if not args.file or not os.path.isfile(args.file):
@@ -45,7 +46,7 @@ def run(df, ngram, prefix):
 
 if __name__ == '__main__':
 
-    # python feature_text.py -f "../input/train_data.csv" -p "test" -d "../output"
+    # python feature_text.py -f "../input/train_01_0607.csv" -p "v1" -d "../output"
     
     start_time = datetime.now()
     feature = []
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
         feature.append(df)
     
-    if DEBUG:
+    if args.debug == "true":
         chunk_size = DEBUG_CHUNK_SIZE
     else:
         chunk_size = CHUNK_SIZE
