@@ -32,7 +32,7 @@ Kaggle比赛经验：https://zhuanlan.zhihu.com/p/27424282
 
 - 线上测试数据集：共500万条，没有label信息。
 
-##Code FrameWork
+## Code FrameWork
 
 - `Stage1`：产生特征，包含手工特征与深度特征。
 - `Stage2`：训练各类模型，如lightGBM、随机森林等。

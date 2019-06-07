@@ -32,23 +32,41 @@ class LigthGBM(object):
 
     def fit(self, X, y, valid_X=None, valid_y=None):
         with Timer("Fitting"):
-          evals_result = {}
           train_set = lgb.Dataset(X, label=y)
           if valid_X is None or valid_y is None:
-              self.bst = lgb.train(self.HYPER_PARAM,
-                              train_set,
-                              verbose_eval=50,
-                              num_boost_round=self.num_boost_round)
+            self.bst = lgb.train(self.HYPER_PARAM,
+                            train_set,
+                            verbose_eval=50,
+                            num_boost_round=self.num_boost_round)
           else :
-              valid_set = lgb.Dataset(valid_X, label=valid_y)
-              self.bst = lgb.train(self.HYPER_PARAM,
-                              train_set,
-                              verbose_eval=50,
-                              evals_result = evals_result,
-                              valid_names=['valid'],
-                              valid_sets=[valid_set],
-                              num_boost_round=self.num_boost_round)
-              self.valid_loss = evals_result['valid']['binary_logloss']
+            evals_result = {}
+            valid_set = lgb.Dataset(valid_X, label=valid_y)
+            self.bst = lgb.train(self.HYPER_PARAM,
+                            train_set,
+                            verbose_eval=50,
+                            evals_result = evals_result,
+                            valid_names=['valid'],
+                            valid_sets=[valid_set],
+                            num_boost_round=self.num_boost_round)
+            self.valid_loss = evals_result['valid']['binary_logloss']
 
     def predict(self, X):
         return self.bst.predict(X)
+
+
+class LigthGBM_DART(LigthGBM):
+    def __init__(self, drop_rate, skip_drop, **kargv):
+        super(LigthGBM_DART, self).__init__(**kargv)
+        self.HYPER_PARAM.update({
+            'drop_rate': drop_rate,
+            'skip_drop': skip_drop,
+            'boosting':'dart'
+        })
+
+
+class LigthGBM_GDBT(LigthGBM):
+    def __init__(self, **kargv):
+        super(LigthGBM_GDBT, self).__init__(**kargv)
+        self.HYPER_PARAM.update({
+            'boosting':'gbdt'
+        })

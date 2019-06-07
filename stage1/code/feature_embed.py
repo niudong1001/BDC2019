@@ -9,7 +9,7 @@ import pandas as pd
 from datetime import datetime
 from utils import dist_utils, ngram_utils
 from scipy.stats import skew, kurtosis
-from helper import ProcessChunk, ORI_TRAIN_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
+from helper import ProcessChunk, ReadCSV, ORI_TRAIN_NAMES, ORI_TEST_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
 
 parser = argparse.ArgumentParser(description='Exctract embed features.')
 parser.add_argument('-f', '--file', type=str, help='file name to process')
@@ -17,6 +17,7 @@ parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
 parser.add_argument('-e', '--embedding', type=str, help='embedding mode')
 parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
+parser.add_argument('-t', '--train', type=str, help='is train file', default="true")
 args = parser.parse_args()
 
 if not args.file or not os.path.isfile(args.file):
@@ -43,10 +44,10 @@ def wmd(s1, s2):
     return dis if dis<100 else 100
 
 
-def norm_wmd(s1, s2):
-    dis = norm_model.wmdistance(s1, s2)
-    dis = np.nan_to_num(dis)
-    return dis if dis<100 else 100
+# def norm_wmd(s1, s2):
+#     dis = norm_model.wmdistance(s1, s2)
+#     dis = np.nan_to_num(dis)
+#     return dis if dis<100 else 100
 
 
 def run(df, ngram, prefix):
@@ -57,7 +58,7 @@ def run(df, ngram, prefix):
 
     # wmd, 衡量两个文档的语义相似性
     df['%s_wmd' % prefix] = df.apply(lambda x: wmd(x['q_ngram'], x['t_ngram']), axis=1)
-    df['%s_norm-wmd' % prefix] = df.apply(lambda x: norm_wmd(x['q_ngram'], x['t_ngram']), axis=1)
+    # df['%s_norm-wmd' % prefix] = df.apply(lambda x: norm_wmd(x['q_ngram'], x['t_ngram']), axis=1)
 
     # Embeddings
     ## 偏态, https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skew.html
@@ -81,7 +82,7 @@ def run(df, ngram, prefix):
 if __name__ == '__main__':
 
     # python feature_embed.py -f ../input/train_data.csv  -e word2vec -p test -d ../output  
-    global model, norm_model
+    global model
 
     if 'glove' in args.embedding:
         # model_file = config.GLOVE_MODEL
@@ -92,15 +93,18 @@ if __name__ == '__main__':
         exit()
 
     model = gensim.models.KeyedVectors.load(model_file, mmap='r')
-    norm_model = gensim.models.KeyedVectors.load(model_file, mmap='r')
-    norm_model.init_sims(replace=True)
+    # norm_model = gensim.models.KeyedVectors.load(model_file, mmap='r')
+    # norm_model.init_sims(replace=True)
 
     start_time = datetime.now()
     feature = []
 
     def process(df):
         df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
-        df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
+        if args.train == "true":
+            df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
+        else:
+            df.drop(['query', 'title'], axis=1, inplace=True, errors='ignore')
         feature.append(df)
     
     if args.debug == "true":
@@ -108,10 +112,11 @@ if __name__ == '__main__':
     else:
         chunk_size = CHUNK_SIZE
 
-    ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
+    if args.train == "true":
+        ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
+    else:
+        process(ReadCSV(args.file, names=ORI_TEST_NAMES, iterator=False))
 
     save_path = os.path.join(args.save_dir, '%s_feature_embed.csv' % args.prefix)
     pd.concat(feature, axis=0).to_csv(save_path, index=None) # 带表头
     print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))
-
-
