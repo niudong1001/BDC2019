@@ -10,32 +10,37 @@ Kaggle比赛经验：https://zhuanlan.zhihu.com/p/27424282
 
 特征探索：https://www.kaggle.com/sudalairajkumar/simple-leaky-exploration-notebook-quora?scriptVersionId=1184830
 
-## 数据集
+## Dataset
 
-- 数据集样例：参考`data/大数据挑战赛_sample.txt`，用以理解数据集。
+- 数据集样例：参考`./legacy/data/大数据挑战赛_sample.txt`，用以理解数据集。
+- 线下训练数据集：参考`./legacy/data/train.csv`，共2万条，用以线下训练模型。
+- 线下测试数据集：参考`./legacy/data/test.csv`，仅用于梳理代码。
+- 线上训练数据集，共1亿条数据，详细信息参考如下：
 
-- 训练数据Sample：参考`data/train_data.csv`，可使用线下训练该数据集，再上传测试。
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 100000000 entries, 0 to 99999999
+  Data columns (total 5 columns):
+  query_id          int64
+  query             object
+  query_title_id    int64
+  title             object
+  label             int64
+  dtypes: int64(3), object(2)
+  memory usage: 20.0 GB
+  ```
 
-- 训练数据集：下面是训练数据的类型描述、内存占用等信息，
+- 线上测试数据集：共500万条，没有label信息。
 
-```bash
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 100000000 entries, 0 to 99999999
-Data columns (total 5 columns):
-query_id          int64
-query             object
-query_title_id    int64
-title             object
-label             int64
-dtypes: int64(3), object(2)
-memory usage: 20.0 GB
-```
+##Code FrameWork
 
-## 模型
+- `Stage1`：产生特征，包含手工特征与深度特征。
+- `Stage2`：训练各类模型，如lightGBM、随机森林等。
+- `Stage3`：模型整合。
 
-- Baseline：参考`models/baseline.ipynb`，使用tfIdf+lr并随机采样1000万条数据建立Baseline模型。
+## FrameWork OP
 
-## 平台相关操作
+下面记录了一些平台相关的操作。
 
 ```bash
 # 查看当前挂载的数据集目录
@@ -56,7 +61,7 @@ total 9.0G
 !./kesci_submit -token 490475a1ae106f67 -file submit.csv
 ```
 
-## 待解决问题
+## Question wait for solving
 
 - 亿级别数据的处理问题？
   - 随机采样？
@@ -71,7 +76,7 @@ total 9.0G
     - 分析数值类变量的统计特征（如观察Label是否均衡），分析多个数值型变量的关系(相关系数，找到高相关的特征)
     - 文本变量，可以统计词频(TF)，TF-IDF，文本长度
 
-## 数据分析
+## Data analysis
 
 - 正负样本比例为1:3，分布不平衡不严重
 - query与title中的单词数目对结果有一定影响，被点击条目的query单词数均值相比于未被点击的query均值较大（均值取log1p）；title关系则相反(均值取log1p，注：这个关系相比于query并不明显)。
@@ -84,7 +89,7 @@ total 9.0G
 - 特征选择的方法多种多样，最简单的是相关度系数(Correlation coefficient)，它主要是衡量两个变量之间的线性关系。Feature和Feature、Feature和Label。
 - 不同种类的模型，我们用hyperopt的默认策略来搜索参数空间，将中间结果全保留下来。
 
-## 新得
+## 一些心得
 
 - https://zhuanlan.zhihu.com/p/60953933
   - 刚参加一个比赛，需要花点时间了解这个比赛的领域背景，甚至需要查一些资料或阅读一些文献，这对后面构建特征和选择模型很重要。我看到有很多 winners 分享经验说自己构建的大多数特征都是从商业(领域)层面思考得到的，所以领域的先验知识很重要。
