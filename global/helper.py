@@ -100,6 +100,7 @@ def ProcessForTrainWord2vec(source_csv, embed_sentences_file):
                     if line_count % 5000000 == 0: 
                         print(f'Processed {line_count} lines.')
 
+# 除去 query_id 和 title_id 转换成 raw content 的，按行写入文件。
 def ProcessForTrainFastText(source_csv, savefile, add_label=True):
     with Timer("Process csv to content for fastText train"):
         with open(savefile, 'w') as f:

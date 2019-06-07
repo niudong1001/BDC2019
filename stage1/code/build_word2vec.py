@@ -12,8 +12,7 @@ parser = argparse.ArgumentParser(description='Build word2vec.')
 parser.add_argument('-f', '--file', type=str, help='sentences file to process')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
 parser.add_argument('-m', '--save-model', type=str, help='file name for save model')
-parser.add_argument('-v', '--save-vector', type=str, help='file name for save vector')
-parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
+# parser.add_argument('-v', '--save-vector', type=str, help='file name for save vector')
 args = parser.parse_args()
 
 if not args.file or not os.path.isfile(args.file):
@@ -39,6 +38,11 @@ if __name__ == "__main__":
         # a memory-friendly iterator
         sentences = SentenceStream(args.file)
         # https://rare-technologies.com/word2vec-tutorial/
-        model = Word2Vec(sentences, size=200, window=5, min_count=5, workers=4)
+        # https://radimrehurek.com/gensim/models/word2vec.html
+        # https://blog.csdn.net/szlcw1/article/details/52751314
+        # https://github.com/lzhenboy/word2vec-Chinese/blob/master/word2vec_train.py
+        # https://www.jianshu.com/p/6a34929c165e
+        model = Word2Vec(sentences, size=200, window=5, min_count=5, workers=4, batch_words=500000)
         model.save(os.path.join(args.save_dir, args.save_model))
-        model.wv.save(os.path.join(args.save_dir, args.save_vector))
+        # model.wv.save(os.path.join(args.save_dir, args.save_vector))
+        # model.wv.save_word2vec_format(os.path.join(args.save_dir, args.save_vector),binary=False)
