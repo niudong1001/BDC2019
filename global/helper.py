@@ -6,6 +6,8 @@ import random
 import gc
 import sys
 import csv
+import json 
+from datetime import datetime
 
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
 ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
@@ -118,3 +120,61 @@ def ProcessForTrainFastText(source_csv, savefile, add_label=True):
                         f.write("{0} {1}\n".format(query, title))
                     if line_count % 5000000 == 0:
                         print(f'Processed {line_count} lines.')
+
+def ExtractLabels(source_csv, savefile, limit=5000000):
+    with Timer("Extract label"):
+        with open(source_csv) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            labels = []
+            for row in csv_reader:
+                line_count += 1
+                labels.append(int(row[-1]))
+                if line_count >= limit:
+                    break
+            np.save(savefile, np.array(labels))
+            print("Label file saved to "+savefile+".")
+
+def ConvertCsvToNpy(source_csv, savefile, rm_header=True, limit=5000000):
+    with Timer("Convert CSV To NPY"):
+        with open(source_csv) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count, res = 0, []
+            if rm_header:
+                next(csv_reader)
+            for row in csv_reader:
+                res.append(list(map(float, row)))
+                line_count += 1
+                if line_count >= limit:
+                    break
+            np.save(savefile, np.array(res), allow_pickle=False)
+            print("Npy file saved to "+savefile+".")
+
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')  
+        else:
+            return super(MyEncoder, self).default(obj)
+
+def usetime(desc=None):
+    def _usetime(func):
+        def __usetime(*args, **kwargs):
+            print("-------------------------------------")
+            if desc: print('[Description]: ' + desc)
+            print('[Runing function]: [%s] ' % func.__name__)
+            stime = datetime.now()
+            res = func(*args, **kwargs)
+            utime = datetime.now() - stime
+            print('[Used Time]: {}'.format(utime))
+            print("-------------------------------------")
+            return res
+        return __usetime
+    return _usetime
