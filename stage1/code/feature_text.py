@@ -1,28 +1,13 @@
 import os
-import argparse
-import pandas as pd
-from datetime import datetime
-from utils import dist_utils, ngram_utils
-import numpy as np
 import sys
-import config
-sys.path.append(config.GLOBAL_DIR)
-from helper import ProcessChunk, ReadCSV, ORI_TRAIN_NAMES, ORI_TEST_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
-
-parser = argparse.ArgumentParser(description='Exctract text features.')
-parser.add_argument('-f', '--file', type=str, help='file name to process')
-parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
-parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
-parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
-parser.add_argument('-t', '--train', type=str, help='is train file', default="true")
-args = parser.parse_args()
-
-if not args.file or not os.path.isfile(args.file):
-    print("Not a valid file.")
-    exit()
-if not args.save_dir or not os.path.isdir(args.save_dir):
-    print("Not a valid dir.")
-    exit()
+import pandas as pd
+import numpy as np
+from datetime import datetime
+from .utils import dist_utils, ngram_utils
+from .config import GLOBAL_DIR
+sys.path.append(GLOBAL_DIR)
+from helper import ProcessChunk, ReadCSV, CHUNK_SIZE, Timer
+import gc
 
 
 def run(df, ngram, prefix):
@@ -45,36 +30,33 @@ def run(df, ngram, prefix):
 
     return df
 
-if __name__ == '__main__':
 
-    # python feature_text.py -f "../input/train_01_0607.csv" -p "v1" -d "../output"
-    
-    start_time = datetime.now()
-    feature = []
+def ExtractTextFeature(source_csv, save_dir, prefix, names, dtype, process_chunkly=True, chunk_size=CHUNK_SIZE, drop_cols=['query', 'title', 'label']):
 
-    def process(df):
-        # df = run(df, ngram_utils.unichars, '%s_%s' % (args.prefix, 'unichars'))
-        # df = run(df, ngram_utils.bichars, '%s_%s' % (args.prefix, 'bichars'))
-        # df = run(df, ngram_utils.trichars, '%s_%s' % (args.prefix, 'trichars'))
-        df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
-        df = run(df, ngram_utils.bigrams, '%s_%s' % (args.prefix, 'bigrams'))
-        df = run(df, ngram_utils.trigrams, '%s_%s' % (args.prefix, 'trigrams'))
-        if args.train == "true":
-            df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
+    with Timer("Extract text feature"):
+        
+        feature = []
+
+        def process(df):
+            # df = run(df, ngram_utils.unichars, '%s_%s' % (prefix, 'unichars'))
+            # df = run(df, ngram_utils.bichars, '%s_%s' % (prefix, 'bichars'))
+            # df = run(df, ngram_utils.trichars, '%s_%s' % (prefix, 'trichars'))
+            df = run(df, ngram_utils.unigrams, '%s_%s' % (prefix, 'unigrams'))
+            df = run(df, ngram_utils.bigrams, '%s_%s' % (prefix, 'bigrams'))
+            df = run(df, ngram_utils.trigrams, '%s_%s' % (prefix, 'trigrams'))
+            df.drop(drop_cols, axis=1, inplace=True, errors='ignore')
+            feature.append(df)
+
+        if process_chunkly:
+            ProcessChunk(source_csv, process, names=names, dtype=dtype,chunk_size=chunk_size)
         else:
-            df.drop(['query', 'title'], axis=1, inplace=True, errors='ignore')
-        feature.append(df)
-    
-    if args.debug == "true":
-        chunk_size = DEBUG_CHUNK_SIZE
-    else:
-        chunk_size = CHUNK_SIZE
+            process(ReadCSV(source_csv, 
+                names=names, 
+                dtype=dtype, 
+                iterator=False)
+            )
 
-    if args.train == "true":
-        ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
-    else:
-        process(ReadCSV(args.file, names=ORI_TEST_NAMES, iterator=False))
-
-    save_path = os.path.join(args.save_dir, '%s_feature_text.csv' % args.prefix)
-    pd.concat(feature, axis=0).to_csv(save_path, index=None)  # 带表头
-    print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))
+        save_path = os.path.join(save_dir, '%s_feature_text.csv' % prefix)
+        pd.concat(feature, axis=0).to_csv(save_path, index=None)  # 带表头
+        del feature
+        gc.collect()

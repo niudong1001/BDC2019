@@ -8,6 +8,25 @@ import argparse
 import fastText
 from fastText import train_supervised, train_unsupervised
 
+# 除去 query_id 和 title_id 转换成 raw content 的，按行写入文件。
+def ProcessForTrainFastText(source_csv, savefile, add_label=True):
+    with Timer("Process csv to content for fastText train"):
+        with open(savefile, 'w') as f:
+            with open(source_csv) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                for row in csv_reader:
+                    line_count += 1
+                    query = row[1]
+                    title = row[3]
+                    if add_label:
+                        label = row[4]
+                        f.write("__label__{0} {1} {2}\n".format(label, query, title))
+                    else:
+                        f.write("{0} {1}\n".format(query, title))
+                    if line_count % 5000000 == 0:
+                        print(f'Processed {line_count} lines.')
+                        
 parser = argparse.ArgumentParser(description='Build fastText.')
 parser.add_argument('-f', '--file', type=str, help='file to process')
 parser.add_argument('-d', '--save-dir', type=str, help='dir for save')

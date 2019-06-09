@@ -11,9 +11,6 @@ import numpy as np
 from scipy.stats import pearsonr
 from collections import Counter
 
-sys.path.append("..")
-import config
-
 
 def _sigmoid(score):
     p = 1. / (1. + np.exp(-score))

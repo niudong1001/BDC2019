@@ -1,9 +1,9 @@
 import sys
-import config
 import numpy as np
+from .config import GLOBAL_DIR
 # from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 # from sklearn.metrics import log_loss
-sys.path.append(config.GLOBAL_DIR)
+sys.path.append(GLOBAL_DIR)
 from helper import Timer, usetime
 import lightgbm as lgb
 
@@ -44,7 +44,8 @@ class LigthGBM(object):
                             valid_sets=[valid_set],
                             num_boost_round=self.num_boost_round)
             self.valid_loss = evals_result['valid']['binary_logloss']
-            return self.valid_loss
+            self.valid_auc = evals_result["valid"]["auc"]
+            return self.valid_loss, self.valid_auc
 
     def predict(self, X):
         return self.bst.predict(X)

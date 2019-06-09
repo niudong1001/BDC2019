@@ -22,6 +22,22 @@ if not args.save_dir or not os.path.isdir(args.save_dir):
     print("Not a valid dir.")
     exit()
 
+def ProcessForTrainWord2vec(source_csv, embed_sentences_file):
+    query_id = -1
+    with Timer("Process csv to embedding sentences"):
+        with open(embed_sentences_file, 'w') as f:
+            with open(source_csv) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                for row in csv_reader:
+                    line_count += 1
+                    if query_id != row[0]:
+                        query_id = row[0]
+                        f.write("{0}\n".format(row[1]))
+                    f.write("{0}\n".format(row[3]))
+                    if line_count % 5000000 == 0: 
+                        print(f'Processed {line_count} lines.')
+
 class SentenceStream(object):
     def __init__(self, dirname):
         self.dirname = dirname

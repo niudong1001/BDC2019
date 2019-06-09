@@ -1,6 +1,6 @@
 import lzma
 import Levenshtein
-from utils import np_utils
+from .np_utils import try_divide
 from scipy.spatial.distance import cosine, jaccard, cityblock, canberra, euclidean, minkowski, braycurtis
 
 # One line time: 36.7 µs ± 388 ns
@@ -17,13 +17,13 @@ def edit_seq_ratio(a, b):
 def jaccard_ratio(a, b):
     a, b = set(a), set(b)
     c = a & b
-    return np_utils.try_divide(float(len(c)), (len(a) + len(b) - len(c)))
+    return try_divide(float(len(c)), (len(a) + len(b) - len(c)))
 
 # One line time: 4.2 µs ± 109 ns
 def dice_ratio(a, b):
     a, b = set(a), set(b)
     c = a & b
-    return np_utils.try_divide(2 * float(len(c)), (len(a) + len(b)))
+    return try_divide(2 * float(len(c)), (len(a) + len(b)))
 
 # One line time: 23.9 ms ± 491 µs
 def lzma_ratio(a, b):
@@ -35,7 +35,7 @@ def lzma_ratio(a, b):
     b_len = len(lzma.compress(b))
     ab_len = len(lzma.compress(a + b))
     ba_len = len(lzma.compress(b + a))
-    ratio = 1 - np_utils.try_divide(min(ab_len, ba_len) - min(a_len, b_len), max(a_len, b_len))
+    ratio = 1 - try_divide(min(ab_len, ba_len) - min(a_len, b_len), max(a_len, b_len))
     return ratio
 
 def cosine_distance(a, b):

@@ -8,13 +8,25 @@ import sys
 import csv
 import json 
 from datetime import datetime
+import shutil
+import os
 
+
+OFFLINE = True  # 是否为离线，本地调试为True，上线为False
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
-ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
-DEBUG_CHUNK_SIZE = 5000
-CHUNK_SIZE = 5000000
+# 关于数据类型所占内存（https://blog.csdn.net/xingkong_dahai/article/details/77140918）
+# 具体转换参考（https://www.jianshu.com/p/d54fc84f3b42）
+ORI_TRAIN_DTYPE = {"query_id":np.uint32, "query":np.object, "query_title_id":np.uint32, "title":np.object, "label":np.uint8}
 
-# 计算执行某个函数需要的时间
+ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
+ORI_TEST_DTYPE = {"query_id":np.uint32, "query":np.object, "query_title_id":np.uint32, "title":np.object}
+
+if OFFLINE:
+    CHUNK_SIZE = 5000
+else:
+    CHUNK_SIZE = 1000000
+
+
 class Timer(object):
     """
     Record the consumed time when ran a code block.
@@ -32,20 +44,38 @@ class Timer(object):
         print(self.prefix+"Finished '"+self.block_name+"' block, time used:", str(elapsed_time)+"s.")
 
 
+# 使用装饰器计算函数所需时间
+def usetime(desc=None):
+    def _usetime(func):
+        def __usetime(*args, **kwargs):
+            print("-------------------------------------")
+            # if desc: print('[Description]: ' + desc)
+            print('[Runing function]: [%s] ' % func.__name__)
+            stime = datetime.now()
+            res = func(*args, **kwargs)
+            utime = datetime.now() - stime
+            print('[Used Time]: {}'.format(utime))
+            print("-------------------------------------")
+            return res
+        return __usetime
+    return _usetime
+
+
 # 读取CSV文件
-def ReadCSV(filename, names, sep=",", iterator=True):
+def ReadCSV(filename, names, dtype, sep=",", iterator=True):
     # http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv
     return pd.read_csv(
         filename, 
         names=names,
         sep=sep,
-        iterator=iterator
+        iterator=iterator,
+        dtype=dtype
     )
 
 
 # 批量读入数据，并apply处理函数
-def ProcessChunk(filename, func, names, chunk_size=5000000):
-    reader = ReadCSV(filename, names, iterator=True)
+def ProcessChunk(filename, func, names, dtype, chunk_size=CHUNK_SIZE):
+    reader = ReadCSV(filename, names, dtype, iterator=True)
     while True:
         try:
             print("Reading chunk...")
@@ -60,9 +90,9 @@ def ProcessChunk(filename, func, names, chunk_size=5000000):
 
 
 # 按照rate比例从每个chunk中随机采样样本
-def RandomSample(filename, rate, names, chunk_size=1000000, random_state=None):
+def RandomSample(filename, rate, names, dtype, chunk_size=CHUNK_SIZE, random_state=0):
     print("Random sample...")
-    reader = ReadCSV(filename, names, iterator=True)
+    reader = ReadCSV(filename, names, dtype, iterator=True)
     chunks = []
     while True:
         try:
@@ -84,73 +114,7 @@ def RandomSample(filename, rate, names, chunk_size=1000000, random_state=None):
 # tmp = RandomSample(train_data_file, .5, chunk_size=5)
 # print(tmp)
 
-# Stage1
-
-def ProcessForTrainWord2vec(source_csv, embed_sentences_file):
-    query_id = -1
-    with Timer("Process csv to embedding sentences"):
-        with open(embed_sentences_file, 'w') as f:
-            with open(source_csv) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                line_count = 0
-                for row in csv_reader:
-                    line_count += 1
-                    if query_id != row[0]:
-                        query_id = row[0]
-                        f.write("{0}\n".format(row[1]))
-                    f.write("{0}\n".format(row[3]))
-                    if line_count % 5000000 == 0: 
-                        print(f'Processed {line_count} lines.')
-
-# 除去 query_id 和 title_id 转换成 raw content 的，按行写入文件。
-def ProcessForTrainFastText(source_csv, savefile, add_label=True):
-    with Timer("Process csv to content for fastText train"):
-        with open(savefile, 'w') as f:
-            with open(source_csv) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                line_count = 0
-                for row in csv_reader:
-                    line_count += 1
-                    query = row[1]
-                    title = row[3]
-                    if add_label:
-                        label = row[4]
-                        f.write("__label__{0} {1} {2}\n".format(label, query, title))
-                    else:
-                        f.write("{0} {1}\n".format(query, title))
-                    if line_count % 5000000 == 0:
-                        print(f'Processed {line_count} lines.')
-
-def ExtractLabels(source_csv, savefile, limit=5000000):
-    with Timer("Extract label"):
-        with open(source_csv) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count = 0
-            labels = []
-            for row in csv_reader:
-                line_count += 1
-                labels.append(int(row[-1]))
-                if line_count >= limit:
-                    break
-            np.save(savefile, np.array(labels))
-            print("Label file saved to "+savefile+".")
-
-def ConvertCsvToNpy(source_csv, savefile, rm_header=True, limit=5000000):
-    with Timer("Convert CSV To NPY"):
-        with open(source_csv) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count, res = 0, []
-            if rm_header:
-                next(csv_reader)
-            for row in csv_reader:
-                res.append(list(map(float, row)))
-                line_count += 1
-                if line_count >= limit:
-                    break
-            np.save(savefile, np.array(res), allow_pickle=False)
-            print("Npy file saved to "+savefile+".")
-
-
+# Json转换的类
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -164,17 +128,10 @@ class MyEncoder(json.JSONEncoder):
         else:
             return super(MyEncoder, self).default(obj)
 
-def usetime(desc=None):
-    def _usetime(func):
-        def __usetime(*args, **kwargs):
-            print("-------------------------------------")
-            if desc: print('[Description]: ' + desc)
-            print('[Runing function]: [%s] ' % func.__name__)
-            stime = datetime.now()
-            res = func(*args, **kwargs)
-            utime = datetime.now() - stime
-            print('[Used Time]: {}'.format(utime))
-            print("-------------------------------------")
-            return res
-        return __usetime
-    return _usetime
+
+def cp(srcfile, dstfile):
+    if os.path.isfile(srcfile):
+        shutil.copyfile(srcfile, dstfile)
+    else:
+        print("srcfile not exist!")
+        return

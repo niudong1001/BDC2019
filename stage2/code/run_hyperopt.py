@@ -1,17 +1,17 @@
 import os
 import json
-import config
 import sys
 import time
 import pickle
 import numpy as np
 import pandas as pd
+from .config import GLOBAL_DIR, K_FOLD, OUTPUT_DIR, OUTPUT_TRAIN_DIR, OUTPUT_TEST_DIR
+sys.path.append(GLOBAL_DIR)
 # https://www.jianshu.com/p/35eed1567463
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 # from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
-from models import LigthGBM_GBDT, LigthGBM_DART
-sys.path.append(config.GLOBAL_DIR)
-from helper import Timer, MyEncoder, usetime
+from .models import LigthGBM_GBDT, LigthGBM_DART
+from helper import Timer, MyEncoder, usetime, OFFLINE
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 
@@ -22,35 +22,40 @@ model_map = {
     # 'sklearn_rf': Sklearn_RF,
     # 'torch_nn': Torch_DNN
 }
+X, y = None, None
+test_X, test_y = None, None
 
 
-@usetime("load train dataset")
-def _load_train():
-    X = np.load(config.IN_TRAIN_FEATURE)
-    y = np.load(config.IN_TRAIN_LABEL)
-    return X, y
+def LoadDataset(in_train_feature, in_train_label, in_test_feature, in_test_label=None):
 
+    global X, y, test_X, test_y
 
-@usetime("load test dataset")
-def _load_test():
-    X = np.load(config.IN_TEST_FEATURE)
-    if config.DEBUG:
-        y = np.load(config.IN_TEST_LABEL)
+    @usetime("load train dataset")
+    def _load_train():
+        X = np.load(in_train_feature)
+        y = np.load(in_train_label)
         return X, y
+
+    @usetime("load test dataset")
+    def _load_test():
+        X = np.load(in_test_feature)
+        if OFFLINE:
+            y = np.load(in_test_label)
+            return X, y
+        else:
+            return X
+    
+    X, y =  _load_train()
+    if OFFLINE:
+        test_X, test_y = _load_test()
     else:
-        return X
+        test_X = _load_test()
 
-
-X, y =  _load_train()
-# print(X[:2])
-# print(y[:2])
-if config.DEBUG:
-    test_X, test_y = _load_test()
-    # print(test_X[:2])
-    # print(test_y[:2])
-else:
-    test_X = _load_test()
-    # print(test_X[:2])
+    print("X:", X[:2], X.shape)
+    print("y:", y[:2], y.shape)
+    print("Test x:", test_X[:2], test_X.shape)
+    if OFFLINE:
+        print("Test y:", test_y[:2], test_y.shape)
 
 
 def fn(params):
@@ -61,26 +66,35 @@ def fn(params):
     print(json.dumps(params, indent=1))
 
     # Train 
-    train_predicts, losses = np.empty_like(y).astype(float), []
-    stratified_folder = StratifiedKFold(n_splits=config.K_FOLD, random_state=0, shuffle=False)
+    aucs, losses = [], []
+    train_predicts = np.empty_like(y).astype(float)
+    stratified_folder = StratifiedKFold(
+        n_splits=K_FOLD, 
+        random_state=0, 
+        shuffle=False
+    )
     for train_index, valid_index in stratified_folder.split(X, y):
         train_X, train_y = X[train_index], y[train_index]
         valid_X, valid_y = X[valid_index], y[valid_index]
-        losses.append(
-            model.fit(train_X, train_y, valid_X, valid_y)
-        )
+        loss, auc = model.fit(train_X, train_y, valid_X, valid_y)
+        losses.append(loss)
+        aucs.append(auc)
         train_predicts[valid_index] = model.predict(valid_X)
-    timestamp, mean, std = int(time.time()), np.mean(losses), np.std(losses)
-    filename = '%s_%d_%f_%f.npy' % (model_name, timestamp, mean, std)
-    np.save(os.path.join(config.OUTPUT_TRAIN_DIR, filename), train_predicts)
+    timestamp = int(time.time())
+    auc, mean, std = np.mean(aucs), np.mean(losses), np.std(losses)
+    filename = '%s_%d_%f_%f_%f.npy' % (model_name, timestamp, auc, mean, std)
+    np.save(os.path.join(OUTPUT_TRAIN_DIR, filename), train_predicts)
     print("Valid AUC:"+str(roc_auc_score(y, train_predicts)))
 
     # Test
     model.fit(X, y)
     test_predicts = model.predict(test_X)
-    np.save(os.path.join(config.OUTPUT_TEST_DIR, filename), test_predicts)
+    np.save(os.path.join(OUTPUT_TEST_DIR, filename), test_predicts)
+    if OFFLINE:
+        print("Test AUC:"+str(roc_auc_score(test_y, test_predicts)))
 
     return {
+        "auc": auc,
         'loss': mean,
         'loss_variance': std,
         'status': STATUS_OK,
@@ -88,7 +102,7 @@ def fn(params):
     }
 
 
-def run_lgb_gbdt():
+def run_lgb_gbdt(eval_num=5):
     trials = Trials()
     search_space = {
         'model': 'lgb_gbdt',
@@ -104,13 +118,11 @@ def run_lgb_gbdt():
     }
     best_param = fmin(fn, space=search_space,
                         algo=tpe.suggest,
-                        max_evals=5,
+                        max_evals=eval_num,
                         trials=trials)
 
 
     info = trials.best_trial
     info['param'] = best_param
 
-    json.dump(info, open(config.OUTPUT_DIR+'lgb_gbdt_best_info.json','w'),indent=1, cls=MyEncoder)
-
-run_lgb_gbdt()
+    json.dump(info, open(OUTPUT_DIR+'lgb_gbdt_best_info.json','w'),indent=1, cls=MyEncoder)
