@@ -1,3 +1,9 @@
+'''
+@Author: niudong
+@LastEditors: niudong
+@Date: 2019-06-09 09:56:20
+@LastEditTime: 2019-06-09 16:48:17
+'''
 import sys
 from .config import GLOBAL_DIR
 sys.path.append(GLOBAL_DIR)

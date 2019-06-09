@@ -1,3 +1,9 @@
+'''
+@Author: niudong
+@LastEditors: niudong
+@Date: 2019-06-01 11:19:50
+@LastEditTime: 2019-06-09 16:46:43
+'''
 
 import pandas as pd
 import numpy as np
@@ -12,7 +18,7 @@ import shutil
 import os
 
 
-OFFLINE = True  # 是否为离线，本地调试为True，上线为False
+OFFLINE = False  # 是否为离线，本地调试为True，上线为False
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
 # 关于数据类型所占内存（https://blog.csdn.net/xingkong_dahai/article/details/77140918）
 # 具体转换参考（https://www.jianshu.com/p/d54fc84f3b42）
