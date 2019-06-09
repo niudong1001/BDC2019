@@ -79,7 +79,10 @@ def ProcessChunk(filename, func, names, dtype, chunk_size=CHUNK_SIZE):
     while True:
         try:
             print("Reading chunk...")
-            func(reader.get_chunk(chunk_size))
+            tmp = reader.get_chunk(chunk_size)
+            func(tmp)
+            del tmp
+            gc.collect()
         except StopIteration:
             print("Finished process.")
             return
@@ -110,7 +113,10 @@ def RandomSample(filename, rate, names, dtype, chunk_size=CHUNK_SIZE, random_sta
     #         # 会被放入内存池？
     #         del locals()[x]
     # gc.collect()
-    return pd.concat(chunks, ignore_index=True)
+    res = pd.concat(chunks, ignore_index=True)
+    del chunks
+    gc.collect()
+    return res
 # tmp = RandomSample(train_data_file, .5, chunk_size=5)
 # print(tmp)
 

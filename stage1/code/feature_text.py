@@ -57,6 +57,8 @@ def ExtractTextFeature(source_csv, save_dir, prefix, names, dtype, process_chunk
             )
 
         save_path = os.path.join(save_dir, '%s_feature_text.csv' % prefix)
-        pd.concat(feature, axis=0).to_csv(save_path, index=None)  # 带表头
-        del feature
+        tmp = pd.concat(feature, axis=0)
+        tmp.to_csv(save_path, index=None)  # 带表头
+
+        del feature, tmp
         gc.collect()

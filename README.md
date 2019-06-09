@@ -61,6 +61,10 @@ total 9.0G
 !./kesci_submit -token 490475a1ae106f67 -file submit.csv
 ```
 
+## Result Analysis
+
+- 生成特征不要添加`query_id`和`query_title_id`，这样会让本地数据过拟合。
+
 ## Question wait for solving
 
 - 亿级别数据的处理问题？
