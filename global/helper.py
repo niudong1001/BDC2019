@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-09 16:46:43
+@LastEditTime: 2019-06-09 21:59:10
 '''
 
 import pandas as pd
@@ -18,10 +18,10 @@ import shutil
 import os
 
 
-OFFLINE = False  # 是否为离线，本地调试为True，上线为False
+OFFLINE = True  # 是否为离线，本地调试为True，上线为False
+
 ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
-# 关于数据类型所占内存（https://blog.csdn.net/xingkong_dahai/article/details/77140918）
-# 具体转换参考（https://www.jianshu.com/p/d54fc84f3b42）
+# 关于数据类型所占内存（https://blog.csdn.net/xingkong_dahai/article/details/77140918）; 具体转换参考（https://www.jianshu.com/p/d54fc84f3b42）
 ORI_TRAIN_DTYPE = {"query_id":np.uint32, "query":np.object, "query_title_id":np.uint32, "title":np.object, "label":np.uint8}
 
 ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
@@ -33,10 +33,8 @@ else:
     CHUNK_SIZE = 1000000
 
 
+# Record the consumed time when ran a code block.
 class Timer(object):
-    """
-    Record the consumed time when ran a code block.
-    """
     def __init__(self, block_name, prefix="----->"):
         self.block_name = block_name
         self.prefix = prefix
@@ -56,7 +54,7 @@ def usetime(desc=None):
         def __usetime(*args, **kwargs):
             print("-------------------------------------")
             # if desc: print('[Description]: ' + desc)
-            print('[Runing function]: [%s] ' % func.__name__)
+            print('[Running function]: %s' % func.__name__)
             stime = datetime.now()
             res = func(*args, **kwargs)
             utime = datetime.now() - stime
@@ -73,9 +71,9 @@ def ReadCSV(filename, names, dtype, sep=",", iterator=True):
     return pd.read_csv(
         filename, 
         names=names,
+        dtype=dtype,
         sep=sep,
-        iterator=iterator,
-        dtype=dtype
+        iterator=iterator
     )
 
 
@@ -126,6 +124,7 @@ def RandomSample(filename, rate, names, dtype, chunk_size=CHUNK_SIZE, random_sta
 # tmp = RandomSample(train_data_file, .5, chunk_size=5)
 # print(tmp)
 
+
 # Json转换的类
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -140,7 +139,7 @@ class MyEncoder(json.JSONEncoder):
         else:
             return super(MyEncoder, self).default(obj)
 
-
+# Linux cp 命令
 def cp(srcfile, dstfile):
     if os.path.isfile(srcfile):
         shutil.copyfile(srcfile, dstfile)

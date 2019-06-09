@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:24:31
-@LastEditTime: 2019-06-09 16:49:02
+@LastEditTime: 2019-06-09 22:11:44
 '''
 
 import os
@@ -55,17 +55,17 @@ def ExtractTextFeature(source_csv, save_dir, prefix, names, dtype, process_chunk
             feature.append(df)
 
         if process_chunkly:
-            ProcessChunk(source_csv, process, names=names, dtype=dtype,chunk_size=chunk_size)
+            ProcessChunk(source_csv, process, 
+            names=names, dtype=dtype,
+            chunk_size=chunk_size)
         else:
-            process(ReadCSV(source_csv, 
-                names=names, 
-                dtype=dtype, 
-                iterator=False)
+            process(
+                ReadCSV(source_csv, names=names, 
+                dtype=dtype, iterator=False)
             )
 
         save_path = os.path.join(save_dir, '%s_feature_text.csv' % prefix)
         tmp = pd.concat(feature, axis=0)
         tmp.to_csv(save_path, index=None)  # 带表头
-
         del feature, tmp
         gc.collect()

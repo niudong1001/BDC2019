@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-@author: Chenglong Chen <c.chenglong@gmail.com>
-@brief: utils for numpy
-
-"""
-
+'''
+@Author: niudong
+@LastEditors: niudong
+@Date: 2019-06-03 21:56:22
+@LastEditTime: 2019-06-09 22:09:21
+'''
 import sys
-
 import numpy as np
 from scipy.stats import pearsonr
 from collections import Counter

@@ -1,3 +1,9 @@
+'''
+@Author: niudong
+@LastEditors: niudong
+@Date: 2019-06-02 22:05:02
+@LastEditTime: 2019-06-09 22:09:10
+'''
 def _unigrams(words):
     """
         Input: a list of words, e.g., ["I", "am", "Denny"]

@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-07 22:12:50
-@LastEditTime: 2019-06-09 16:49:27
+@LastEditTime: 2019-06-09 22:14:23
 '''
 import os
 import json
@@ -57,11 +57,11 @@ def LoadDataset(in_train_feature, in_train_label, in_test_feature, in_test_label
     else:
         test_X = _load_test()
 
-    print("X:", X[:2], X.shape)
-    print("y:", y[:2], y.shape)
-    print("Test x:", test_X[:2], test_X.shape)
+    print("X:", X.shape, X[:2])
+    print("y:", y.shape, y[:2])
+    print("Test x:", test_X.shape, test_X[:2])
     if OFFLINE:
-        print("Test y:", test_y[:2], test_y.shape)
+        print("Test y:", test_y.shape, test_y[:2])
 
 
 def fn(params):

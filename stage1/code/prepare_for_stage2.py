@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-09 11:44:03
-@LastEditTime: 2019-06-09 16:49:07
+@LastEditTime: 2019-06-09 22:12:51
 '''
 import os
 import sys
@@ -26,7 +26,7 @@ def ExtractTrainLabel(source_csv, savefile):
             print("Label file saved to "+savefile)
 
 
-# 将csv转化为npy
+# 将特征csv转化为npy
 def ConvertCSVToNPY(source_csv, savefile, rm_header=True):
     with Timer("Convert CSV To NPY"):
         with open(source_csv) as csv_file:

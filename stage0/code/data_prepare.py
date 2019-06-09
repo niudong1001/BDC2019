@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-09 09:56:20
-@LastEditTime: 2019-06-09 16:48:17
+@LastEditTime: 2019-06-09 22:02:28
 '''
 import sys
 from .config import GLOBAL_DIR
@@ -13,6 +13,7 @@ import os
 import gc
 
 
+# 随机采样训练数据集
 def RandomSampleCSV(source_csv, save_file, rate, names=ORI_TRAIN_NAMES, dtype=ORI_TRAIN_DTYPE, chunk_size=CHUNK_SIZE):
   with Timer("Random sample"):
     tmp = RandomSample(source_csv, rate, names=names, dtype=dtype, chunk_size=chunk_size)
@@ -23,8 +24,10 @@ def RandomSampleCSV(source_csv, save_file, rate, names=ORI_TRAIN_NAMES, dtype=OR
     del tmp
     gc.collect()
 
+
+# 顺序采样数据集
 def SampleCSV(source_csv, save_file, count, names=ORI_TRAIN_NAMES, dtype=ORI_TRAIN_DTYPE):
-  with Timer("Sample"):
+  with Timer("Orderly Sample"):
     reader = ReadCSV(source_csv, names, dtype, iterator=True)
     while True:
       try:
