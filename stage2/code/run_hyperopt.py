@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-07 22:12:50
-@LastEditTime: 2019-06-09 22:14:23
+@LastEditTime: 2019-06-10 21:18:38
 '''
 import os
 import json
@@ -89,7 +89,7 @@ def fn(params):
     timestamp = int(time.time())
     mean, std = np.mean(losses), np.std(losses)
     chunk_auc, total_auc = np.mean(aucs), roc_auc_score(y, train_predicts)
-    filename = '%s_%d_%f_%f_%f_%f.npy' % (model_name, timestamp, chunk_auc, total_auc, mean, std)
+    filename = '%s_%d_%f_%f_%f.npy' % (model_name, timestamp, min(chunk_auc, total_auc), mean, std)
     np.save(os.path.join(OUTPUT_TRAIN_DIR, filename), train_predicts)
     print("Valid AUC (chunk, total):" + str(chunk_auc) + " " + str(total_auc))
 

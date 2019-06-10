@@ -2,11 +2,12 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-09 11:44:03
-@LastEditTime: 2019-06-09 22:12:51
+@LastEditTime: 2019-06-10 21:09:40
 '''
 import os
 import sys
 import csv
+import gc
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -36,3 +37,26 @@ def ConvertCSVToNPY(source_csv, savefile, rm_header=True):
             print("Part of rows:", res[:2])
             np.save(savefile, np.array(res))
             print("Npy file saved to "+savefile)
+
+
+# 合并所有特征
+def CombineFeatures(feature_files, savefile):
+    
+    # 拼接特征
+    with Timer("Concat feature"):
+        features = pd.concat([ReadCSV(f, iterator=False) for f in feature_files], axis=1)
+
+    # change inf to nan
+    with Timer("Change inf to nan"):
+        features = features.astype(dtype=float)
+        inf = np.nan_to_num(np.inf)
+        features = features.replace(inf, np.nan)
+    
+    # fill nan
+    with Timer("Fill nan"):
+        features = features.fillna(0)
+
+    features.to_csv(savefile, index=None)
+
+    del features
+    gc.collect()

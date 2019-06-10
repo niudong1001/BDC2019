@@ -2,36 +2,23 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-04 23:04:29
-@LastEditTime: 2019-06-09 16:48:51
+@LastEditTime: 2019-06-10 20:12:50
 '''
-import config
-import sys
-sys.path.append(config.GLOBAL_DIR)
 import os
+import sys
+import gc
 import gensim
-import argparse
 import numpy as np
 import pandas as pd
 from datetime import datetime
-from utils import dist_utils, ngram_utils
+from .config import GLOBAL_DIR
+sys.path.append(GLOBAL_DIR)
+from .utils import dist_utils, ngram_utils
 from scipy.stats import skew, kurtosis
-from helper import ProcessChunk, ReadCSV, ORI_TRAIN_NAMES, ORI_TEST_NAMES, DEBUG_CHUNK_SIZE, CHUNK_SIZE
+from helper import ProcessChunk, ReadCSV, ORI_TRAIN_NAMES, ORI_TEST_NAMES, CHUNK_SIZE, Timer
 
-parser = argparse.ArgumentParser(description='Exctract embed features.')
-parser.add_argument('-f', '--file', type=str, help='file name to process')
-parser.add_argument('-p', '--prefix', type=str, help='prefix for features')
-parser.add_argument('-d', '--save-dir', type=str, help='dir for save')
-parser.add_argument('-e', '--embedding', type=str, help='embedding mode')
-parser.add_argument('-b', '--debug', type=str, help='is debug', default="true")
-parser.add_argument('-t', '--train', type=str, help='is train file', default="true")
-args = parser.parse_args()
 
-if not args.file or not os.path.isfile(args.file):
-    print("Not a valid file.")
-    exit()
-if not args.save_dir or not os.path.isdir(args.save_dir):
-    print("Not a valid dir.")
-    exit()
+model, norm_model = None, None
 
 
 def sent2vec(words):
@@ -50,10 +37,10 @@ def wmd(s1, s2):
     return dis if dis<100 else 100
 
 
-# def norm_wmd(s1, s2):
-#     dis = norm_model.wmdistance(s1, s2)
-#     dis = np.nan_to_num(dis)
-#     return dis if dis<100 else 100
+def norm_wmd(s1, s2):
+    dis = norm_model.wmdistance(s1, s2)
+    dis = np.nan_to_num(dis)
+    return dis if dis<100 else 100
 
 
 def run(df, ngram, prefix):
@@ -83,46 +70,43 @@ def run(df, ngram, prefix):
     df['%s_braycurtis-distance' % prefix] = df.apply(lambda x: dist_utils.braycurtis_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
 
     df.drop(['q_ngram', 't_ngram'], axis=1, inplace=True)
+    
     return df
 
-if __name__ == '__main__':
 
-    # python feature_embed.py -f ../input/train_data.csv  -e word2vec -p test -d ../output  
-    global model
+def ExtractEmbedFeature(source_csv, save_dir, prefix, names, dtype, embed_mode, embed_model_file, process_chunkly=True, chunk_size=CHUNK_SIZE, drop_cols=['query', 'title', 'label']):
 
-    if 'glove' in args.embedding:
-        # model_file = config.GLOVE_MODEL
-        exit()
-    elif 'word2vec' in args.embedding:
-        model_file = config.WORD2VEC_MODEL
-    else :
-        exit()
+    with Timer("Extract embedding feature"):
 
-    model = gensim.models.KeyedVectors.load(model_file, mmap='r')
-    # norm_model = gensim.models.KeyedVectors.load(model_file, mmap='r')
-    # norm_model.init_sims(replace=True)
+        global model
+        
+        if embed_mode == "fastText":
+            pass
+        elif embed_mode == "word2vec":
+            model = gensim.models.KeyedVectors.load(embed_model_file, mmap='r')
+            # norm_model = gensim.models.KeyedVectors.load(embed_model_file, mmap='r')
+            # norm_model.init_sims(replace=True)
 
-    start_time = datetime.now()
-    feature = []
-
-    def process(df):
-        df = run(df, ngram_utils.unigrams, '%s_%s' % (args.prefix, 'unigrams'))
-        if args.train == "true":
-            df.drop(['query', 'title', 'label'], axis=1, inplace=True, errors='ignore')
+        feature = []
+        
+        def process(df):
+            df = run(df, ngram_utils.unigrams, '%s_%s' % (prefix, 'unigrams'))
+            df.drop(drop_cols, axis=1, inplace=True, errors='ignore')
+            feature.append(df)
+        
+        if process_chunkly:
+            ProcessChunk(source_csv, process, 
+            names=names, dtype=dtype,
+            chunk_size=chunk_size)
         else:
-            df.drop(['query', 'title'], axis=1, inplace=True, errors='ignore')
-        feature.append(df)
-    
-    if args.debug == "true":
-        chunk_size = DEBUG_CHUNK_SIZE
-    else:
-        chunk_size = CHUNK_SIZE
+            process(
+                ReadCSV(source_csv, names=names, 
+                dtype=dtype, iterator=False)
+            )
 
-    if args.train == "true":
-        ProcessChunk(args.file, process, names=ORI_TRAIN_NAMES, chunk_size=chunk_size)
-    else:
-        process(ReadCSV(args.file, names=ORI_TEST_NAMES, iterator=False))
-
-    save_path = os.path.join(args.save_dir, '%s_feature_embed.csv' % args.prefix)
-    pd.concat(feature, axis=0).to_csv(save_path, index=None) # 带表头
-    print('Use time: {}. Save file to {}'.format(datetime.now()-start_time, save_path))
+        save_path = os.path.join(save_dir, '%s_feature_embed.csv' % prefix)
+        tmp = pd.concat(feature, axis=0)
+        tmp.to_csv(save_path, index=None)  # 带表头
+        
+        del feature, tmp
+        gc.collect()

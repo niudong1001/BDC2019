@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:24:31
-@LastEditTime: 2019-06-09 22:11:44
+@LastEditTime: 2019-06-10 19:28:18
 '''
 
 import os
@@ -24,8 +24,10 @@ def run(df, ngram, prefix):
     df['t_ngram'] = df['title'].apply(ngram)
 
     ## 长度特征
-    df['%s_q-len' % prefix] = df['q_ngram'].apply(lambda x: np.log1p(len(x)))
-    df['%s_t-len' % prefix] = df['t_ngram'].apply(lambda x: np.log1p(len(x)))
+    df['%s_q-len' % prefix] = df['q_ngram'].apply(lambda x: len(x))
+    df['%s_t-len' % prefix] = df['t_ngram'].apply(lambda x: len(x))
+    df['%s_q-log-len' % prefix] = df['q_ngram'].apply(lambda x: np.log1p(len(x)))
+    df['%s_t-log-len' % prefix] = df['t_ngram'].apply(lambda x: np.log1p(len(x)))
 
     ## 字符集合相似度
     df['%s_dice-ratio'% prefix] = df.apply(lambda x: dist_utils.dice_ratio(x['q_ngram'], x['t_ngram']), axis=1)

@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-09 21:59:10
+@LastEditTime: 2019-06-10 21:06:07
 '''
 
 import pandas as pd
@@ -66,7 +66,7 @@ def usetime(desc=None):
 
 
 # 读取CSV文件
-def ReadCSV(filename, names, dtype, sep=",", iterator=True):
+def ReadCSV(filename, names=None, dtype=None, sep=",", iterator=True):
     # http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv
     return pd.read_csv(
         filename, 
