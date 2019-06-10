@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-04 23:04:29
-@LastEditTime: 2019-06-10 20:12:50
+@LastEditTime: 2019-06-10 23:06:27
 '''
 import os
 import sys
@@ -62,7 +62,7 @@ def run(df, ngram, prefix):
     df['%s_t-kurtosis' % prefix] = df['t_ngram'].apply(lambda x :kurtosis(sent2vec(x)))
     ## 距离
     df['%s_cosine-distance' % prefix] = df.apply(lambda x: dist_utils.cosine_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
-    # df['%s_jaccard-distance' % prefix] = df.apply(lambda x: dist_utils.jaccard_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
+    df['%s_jaccard-distance' % prefix] = df.apply(lambda x: dist_utils.jaccard_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_canberra-distance' % prefix] = df.apply(lambda x: dist_utils.canberra_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_cityblock-distance' % prefix] = df.apply(lambda x: dist_utils.cityblock_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
     df['%s_euclidean-distance' % prefix] = df.apply(lambda x: dist_utils.euclidean_distance(sent2vec(x['q_ngram']), sent2vec(x['t_ngram'])), axis=1)
@@ -78,7 +78,7 @@ def ExtractEmbedFeature(source_csv, save_dir, prefix, names, dtype, embed_mode, 
 
     with Timer("Extract embedding feature"):
 
-        global model
+        global model, norm_model
         
         if embed_mode == "fastText":
             pass
@@ -95,9 +95,11 @@ def ExtractEmbedFeature(source_csv, save_dir, prefix, names, dtype, embed_mode, 
             feature.append(df)
         
         if process_chunkly:
-            ProcessChunk(source_csv, process, 
-            names=names, dtype=dtype,
-            chunk_size=chunk_size)
+            ProcessChunk(
+                source_csv, process, 
+                names=names, dtype=dtype,
+                chunk_size=chunk_size
+            )
         else:
             process(
                 ReadCSV(source_csv, names=names, 

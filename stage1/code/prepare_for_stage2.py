@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-09 11:44:03
-@LastEditTime: 2019-06-10 21:09:40
+@LastEditTime: 2019-06-10 22:42:31
 '''
 import os
 import sys
@@ -33,7 +33,7 @@ def ConvertCSVToNPY(source_csv, savefile, rm_header=True):
         with open(source_csv) as csv_file:
             csv_reader= csv.reader(csv_file, delimiter=',')
             if rm_header: next(csv_reader)
-            res = [list(map(float, _)) for _ in csv_reader]
+            res = [_ for _ in csv_reader]
             print("Part of rows:", res[:2])
             np.save(savefile, np.array(res))
             print("Npy file saved to "+savefile)
@@ -41,22 +41,17 @@ def ConvertCSVToNPY(source_csv, savefile, rm_header=True):
 
 # 合并所有特征
 def CombineFeatures(feature_files, savefile):
-    
     # 拼接特征
-    with Timer("Concat feature"):
+    with Timer("Concat features"):
         features = pd.concat([ReadCSV(f, iterator=False) for f in feature_files], axis=1)
-
     # change inf to nan
     with Timer("Change inf to nan"):
         features = features.astype(dtype=float)
         inf = np.nan_to_num(np.inf)
         features = features.replace(inf, np.nan)
-    
     # fill nan
     with Timer("Fill nan"):
         features = features.fillna(0)
-
     features.to_csv(savefile, index=None)
-
     del features
     gc.collect()

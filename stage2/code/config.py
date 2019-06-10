@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-08 10:22:21
-@LastEditTime: 2019-06-09 22:13:13
+@LastEditTime: 2019-06-10 22:49:15
 '''
 import os
 
@@ -16,4 +16,4 @@ GLOBAL_DIR = os.path.abspath('./global/')
 OUTPUT_TRAIN_DIR = OUTPUT_DIR + "train/"
 OUTPUT_TEST_DIR = OUTPUT_DIR + "test/"
 
-K_FOLD = 5
+K_FOLD = 10

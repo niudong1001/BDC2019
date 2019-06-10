@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-04 23:34:43
-@LastEditTime: 2019-06-10 20:10:33
+@LastEditTime: 2019-06-10 22:30:06
 '''
 import csv
 import os
@@ -40,15 +40,15 @@ def PrepareWord2vecSamples(source_csv, save_file):
                         print(f'Processed {line_count} lines.')
 
 
-def TrainWord2vec(source_file, save_file):
+def TrainWord2vec(source_file, save_name):
     with Timer("Train word2vec"):
-        sentences = SentenceStream(source_file)
+        # sentences = SentenceStream(source_file)
         # https://rare-technologies.com/word2vec-tutorial/
         # https://radimrehurek.com/gensim/models/word2vec.html
         # https://blog.csdn.net/szlcw1/article/details/52751314
         # https://github.com/lzhenboy/word2vec-Chinese/blob/master/word2vec_train.py
         # https://www.jianshu.com/p/6a34929c165e
         model = Word2Vec(LineSentence(source_file), size=200, window=5, min_count=5, workers=4, batch_words=500000)
-        model.save(save_file+".model")
-        model.wv.save(save_file+".kv")
+        model.save(save_name+".model")
+        model.wv.save(save_name+".kv")
         # model.wv.save_word2vec_format(save_file,binary=False)

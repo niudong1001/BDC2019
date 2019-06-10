@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-07 22:12:50
-@LastEditTime: 2019-06-10 21:18:38
+@LastEditTime: 2019-06-10 22:48:19
 '''
 import os
 import json
@@ -22,14 +22,14 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 
 
+X, y = None, None
+test_X, test_y = None, None
 model_map = {
     'lgb_dart': LigthGBM_DART,
     'lgb_gbdt': LigthGBM_GBDT,
     # 'sklearn_rf': Sklearn_RF,
     # 'torch_nn': Torch_DNN
 }
-X, y = None, None
-test_X, test_y = None, None
 
 
 def LoadDataset(in_train_feature, in_train_label, in_test_feature, in_test_label=None):
@@ -112,7 +112,7 @@ def fn(params):
     }
 
 
-def run_lgb_gbdt(eval_num=5):
+def run_lgb_gbdt(eval_num=10):
     trials = Trials()
     search_space = {
         'model': 'lgb_gbdt',
@@ -131,11 +131,10 @@ def run_lgb_gbdt(eval_num=5):
                         max_evals=eval_num,
                         trials=trials)
 
-
     info = trials.best_trial
     info['param'] = best_param
 
-    json.dump(info, open(OUTPUT_DIR+'lgb_gbdt_best_info.json','w'),indent=1, cls=MyEncoder)
+    json.dump(info, open(OUTPUT_DIR+'lgb_gbdt_best_info_{}.json'.format(int(time.time())),'w'),indent=1, cls=MyEncoder)
 
 
 def run_lgb_dart(eval_num=5):
@@ -159,8 +158,7 @@ def run_lgb_dart(eval_num=5):
                         max_evals=eval_num,
                         trials=trials)
 
-
     info = trials.best_trial
     info['param'] = best_param
 
-    json.dump(info, open(OUTPUT_DIR+'lgb_dart_best_info.json','w'),indent=1, cls=MyEncoder)
+    json.dump(info, open(OUTPUT_DIR+'lgb_dart_best_info_{}.json'.format(int(time.time())),'w'),indent=1, cls=MyEncoder)

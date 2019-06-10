@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:24:31
-@LastEditTime: 2019-06-10 19:28:18
+@LastEditTime: 2019-06-10 22:32:11
 '''
 
 import os
@@ -57,9 +57,11 @@ def ExtractTextFeature(source_csv, save_dir, prefix, names, dtype, process_chunk
             feature.append(df)
 
         if process_chunkly:
-            ProcessChunk(source_csv, process, 
-            names=names, dtype=dtype,
-            chunk_size=chunk_size)
+            ProcessChunk(
+                source_csv, process, 
+                names=names, dtype=dtype,
+                chunk_size=chunk_size
+            )
         else:
             process(
                 ReadCSV(source_csv, names=names, 
