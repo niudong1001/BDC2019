@@ -2,17 +2,16 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:56:31
-@LastEditTime: 2019-06-09 22:09:04
+@LastEditTime: 2019-06-12 20:28:24
 '''
 import lzma
 import Levenshtein
 from .np_utils import try_divide
-from scipy.spatial.distance import cosine, jaccard, cityblock, canberra, euclidean, minkowski, braycurtis
+from scipy.spatial.distance import cosine, jaccard, cityblock, canberra, euclidean, minkowski, braycurtis, mahalanobis
 
 # One line time: 36.7 µs ± 388 ns
 def edit_set_ratio(a, b):
-    a, b = list(a), list(b)
-    return Levenshtein.setratio(a, b)
+    return Levenshtein.setratio(list(a), list(b))
 
 # One line time: 20.7 µs ± 1.25 µs
 def edit_seq_ratio(a, b):
@@ -69,8 +68,11 @@ def euclidean_distance(a, b):
     return np.nan_to_num(euclidean(a, b))
 
 
-def minkowski_distance(a, b, p=3):
+def minkowski_distance(a, b, p=0):
     return np.nan_to_num(minkowski(a, b, p))
+
+def mahalanobis_distance(a, b):
+    return np.nan_to_num(mahalanobis(a, b))
 
 
 if __name__ == '__main__':

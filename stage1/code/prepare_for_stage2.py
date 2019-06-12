@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-09 11:44:03
-@LastEditTime: 2019-06-10 22:42:31
+@LastEditTime: 2019-06-12 19:54:37
 '''
 import os
 import sys
@@ -31,11 +31,13 @@ def ExtractTrainLabel(source_csv, savefile):
 def ConvertCSVToNPY(source_csv, savefile, rm_header=True):
     with Timer("Convert CSV To NPY"):
         with open(source_csv) as csv_file:
-            csv_reader= csv.reader(csv_file, delimiter=',')
-            if rm_header: next(csv_reader)
-            res = [_ for _ in csv_reader]
-            print("Part of rows:", res[:2])
-            np.save(savefile, np.array(res))
+            tmp = np.array(
+                ReadCSV(source_csv, iterator=False)
+            )
+            print("Part of rows:", tmp[:2])
+            np.save(savefile, tmp)
+            del tmp
+            gc.collect()
             print("Npy file saved to "+savefile)
 
 

@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-10 22:26:35
+@LastEditTime: 2019-06-12 19:41:19
 '''
 
 import pandas as pd
@@ -78,7 +78,7 @@ def ReadCSV(filename, names=None, dtype=None, sep=",", iterator=True):
 
 
 # 批量读入数据，并apply处理函数
-def ProcessChunk(filename, func, names, dtype, chunk_size=CHUNK_SIZE):
+def ProcessChunk(filename, func, names=None, dtype=None, chunk_size=CHUNK_SIZE):
     reader = ReadCSV(filename, names, dtype, iterator=True)
     while True:
         try:
@@ -110,7 +110,7 @@ def RandomSample(filename, rate, names, dtype, chunk_size=CHUNK_SIZE, random_sta
             )
         except StopIteration:
             print("Finished sample.")
-            break
+            return
     # 删除无用引用, https://blog.csdn.net/jiangjiang_jian/article/details/79140742
     # for x in locals().keys():
     #     if x != "res":

@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:24:31
-@LastEditTime: 2019-06-10 22:32:11
+@LastEditTime: 2019-06-13 00:24:36
 '''
 
 import os
@@ -15,6 +15,15 @@ from .config import GLOBAL_DIR
 sys.path.append(GLOBAL_DIR)
 from helper import ProcessChunk, ReadCSV, CHUNK_SIZE, Timer
 import gc
+from nltk import ngram
+
+
+def ngram(text, n):
+    return ngram(text.split(), n)
+
+
+def vec_ngram(doc, n):
+    return np.vectorize(ngram)(doc, n)
 
 
 def run(df, ngram, prefix):
