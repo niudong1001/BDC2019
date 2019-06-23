@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-04 23:34:43
-@LastEditTime: 2019-06-10 22:30:06
+@LastEditTime: 2019-06-13 21:12:01
 '''
 import csv
 import os
@@ -12,6 +12,19 @@ sys.path.append(GLOBAL_DIR)
 from helper import Timer
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
+from gensim.models.callbacks import CallbackAny2Vec
+
+
+class PrintCallback(CallbackAny2Vec):
+    
+    def __init__(self):
+        self.epoch= 0
+    
+    def on_epoch_end(self, model):
+        loss = model.get_latest_training_loss()
+        # 注意这里loss是累加的
+        print("loss after epoch {}: {}".format(self.epoch, loss))
+        self.epoch += 1
 
 
 class SentenceStream(object):
@@ -48,7 +61,7 @@ def TrainWord2vec(source_file, save_name):
         # https://blog.csdn.net/szlcw1/article/details/52751314
         # https://github.com/lzhenboy/word2vec-Chinese/blob/master/word2vec_train.py
         # https://www.jianshu.com/p/6a34929c165e
-        model = Word2Vec(LineSentence(source_file), size=200, window=5, min_count=5, workers=4, batch_words=500000)
+        model = Word2Vec(LineSentence(source_file), size=200, window=5, min_count=5, workers=4, batch_words=500000, iter=10, compute_loss=True, callbacks=[PrintCallback()])
         model.save(save_name+".model")
         model.wv.save(save_name+".kv")
         # model.wv.save_word2vec_format(save_file,binary=False)

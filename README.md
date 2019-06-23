@@ -92,6 +92,66 @@ total 9.0G
 - 如果你想对数据有更深入的了解，可以通过思考数据集的构造过程来发现一些magic feature，这些特征有可能会大大提升效果。
 - 特征选择的方法多种多样，最简单的是相关度系数(Correlation coefficient)，它主要是衡量两个变量之间的线性关系。Feature和Feature、Feature和Label。
 - 不同种类的模型，我们用hyperopt的默认策略来搜索参数空间，将中间结果全保留下来。
+- 全量word2vec训练：
+
+```bash
+----->Started 'Train word2vec' block...
+loss after epoch 0: 23114880.0
+loss after epoch 1: 33010964.0
+loss after epoch 2: 38115220.0
+loss after epoch 3: 42519784.0
+loss after epoch 4: 46786304.0
+loss after epoch 5: 50939412.0
+loss after epoch 6: 54872764.0
+loss after epoch 7: 58683592.0
+loss after epoch 8: 62278976.0
+loss after epoch 9: 65595156.0
+----->Finished 'Train word2vec' block, time used: 9213.73s.
+```
+```
+Epoch 1, loss: 38632772.00, time: 16min 58s
+Better model. Best loss: 38632772.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 2, loss: 22762672.00, time: 18min 31s
+Better model. Best loss: 22762672.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 3, loss: 11456860.00, time: 18min 35s
+Better model. Best loss: 11456860.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 4, loss: 7699376.00, time: 16min 20s
+Better model. Best loss: 7699376.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 5, loss: 7607152.00, time: 16min 36s
+Better model. Best loss: 7607152.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 6, loss: 7338768.00, time: 16min 51s
+Better model. Best loss: 7338768.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 7, loss: 7121424.00, time: 16min 52s
+Better model. Best loss: 7121424.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 8, loss: 6929184.00, time: 17min 59s
+Better model. Best loss: 6929184.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 9, loss: 6632288.00, time: 17min 35s
+Better model. Best loss: 6632288.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 10, loss: 6295200.00, time: 17min 35s
+Better model. Best loss: 6295200.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 11, loss: 5856168.00, time: 17min 56s
+Better model. Best loss: 5856168.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 12, loss: 5416000.00, time: 18min 29s
+Better model. Best loss: 5416000.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 13, loss: 469864.00, time: 18min 2s
+Better model. Best loss: 469864.00
+Model ./stage1/input/word2vec.model save done!
+Epoch 14, loss: 0.00, time: 18min 9s
+Epoch 15, loss: 0.00, time: 18min 13s
+Time to train: 267min 3s
+```
 
 ## 一些心得
 
@@ -105,3 +165,26 @@ total 9.0G
   - 特征工程和模型融合是打 kaggle 比赛的两大利器，比赛后期基本就是尝试各种模型融合了。对于模型融合，大牛的观点：真正重要的是要有两三个强模型和很多相关性很小的弱模型，模型多样性很重要，弱一点也没关系。幸运的是我们每个人手里都有一个不错的模型，然后我又批量生成了一些弱模型，融合起来，取得了不错的效果。
 - 文本相似度：https://blog.csdn.net/qq_28031525/article/details/79596376
 - 词向量对比：https://zhuanlan.zhihu.com/p/56382372
+
+
+# 将特征csv转化为npy
+def ConvertCSVToNPY(source_csv, savefile, names=None, drop_cols=[]):
+    with Timer("Convert CSV To NPY"):
+        tmp0 = ReduceMemUsage(ReadCSV(source_csv, names=names, iterator=False))
+        tmp0.drop(drop_cols, axis=1, inplace=True, errors='ignore')
+        tmp = np.array(tmp0)
+        print("csv file shape:", tmp.shape)
+        print("two rows of file:")
+        print(tmp[:2])
+        np.save(savefile, tmp)
+        print("Npy file saved to "+savefile)
+        del tmp, tmp0
+        gc.collect()
+
+# 提取训练数据集的label
+# ConvertCSVToNPY(train_file, npy_label_file, names=ORI_TRAIN_NAMES)
+# # 转换csv到numpy
+# if recombine:
+#     ConvertCSVToNPY(csv_train_concat_feature_file, npy_train_concat_feature_file)
+#     if not OFFLINE:
+#         ConvertCSVToNPY(csv_test_concat_feature_file, npy_test_concat_feature_file)

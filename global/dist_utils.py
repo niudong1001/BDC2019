@@ -2,11 +2,12 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:56:31
-@LastEditTime: 2019-06-13 22:01:54
+@LastEditTime: 2019-06-23 20:48:51
 '''
 import lzma
 import Levenshtein
-from .np_utils import try_divide
+from np_utils import try_divide
+import numpy as np
 from scipy.spatial.distance import cosine, jaccard, cityblock, canberra, euclidean, minkowski, braycurtis, mahalanobis
 
 # One line time: 36.7 µs ± 388 ns
@@ -78,8 +79,6 @@ if __name__ == '__main__':
     test_t1 = 'asfkhioa1239asfkhkashdfkjlhaskdf13r asfnka'
     test_t2 = '123or8y908adsufinzkxnvhihsdfasifh'
 
-
-import numpy as np
 def lcs(seq1, seq2):
     seq1 = seq1.split()
     seq2 = seq2.split()
