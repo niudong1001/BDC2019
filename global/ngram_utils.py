@@ -3,7 +3,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-02 22:05:02
-@LastEditTime: 2019-06-23 20:49:14
+@LastEditTime: 2019-06-25 20:11:57
 '''
 def _unigrams(words):
     """
@@ -74,9 +74,9 @@ if __name__ == '__main__':
     print(x)
     print(y)
     print(z)
-    # m = unichars(words)
-    # n = bichars(words)
-    # q = trichars(words)
-    # print(m)
-    # print(n)
-    # print(q)
+    m = unichars(words)
+    n = bichars(words)
+    q = trichars(words)
+    print(m)
+    print(n)
+    print(q)

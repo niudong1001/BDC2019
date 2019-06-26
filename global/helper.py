@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-23 20:48:07
+@LastEditTime: 2019-06-25 20:04:40
 '''
 
 import pandas as pd
@@ -20,7 +20,7 @@ from sklearn.metrics import roc_auc_score
 import tqdm
 
 
-OFFLINE = True
+OFFLINE = False
 CAL_Q_AUC = False
 
 
@@ -67,8 +67,7 @@ def ProcessChunk(filename, func, names=None, dtype=None, chunk_size=CHUNK_SIZE):
     reader = ReadCSV(filename, names, dtype, iterator=True)
     while True:
         try:
-            with Timer("read chunk"):
-                tmp = reader.get_chunk(chunk_size)
+            tmp = reader.get_chunk(chunk_size)
             with Timer("process chunk"):
                 func(tmp)
             # 删除chunk数据
@@ -125,16 +124,17 @@ def ReduceMemUsage(df, verbose=True):
 
 
 # 提取feature函数
-def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func, names=None, dtype=None, process_chunkly=True, chunk_size=CHUNK_SIZE, drop_first_cols=['query_id', 'query_title_id', 'label'], drop_last_cols=['query', 'title']):
+def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func, 
+    names=None, dtype=None, process_chunkly=True, chunk_size=CHUNK_SIZE, 
+    drop_first_cols=['query_id', 'query_title_id', 'label'], 
+    drop_last_cols=['query', 'title']):
 
     with Timer("extract {} feature".format(feature_name)):
         
         basefilename = os.path.join(save_dir, 
         '%s_%s' % (prefix, feature_name))
         save_path = basefilename + ".csv.gz"
-        # 存在则移除，注意会覆盖
-        if os.path.exists(save_path):
-            os.remove(save_path)
+        is_first_invoke = True
 
         def process(df):
             # 先丢弃不需要的部分，避免长时间占用内存
@@ -148,8 +148,15 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func, nam
                 # 丢弃剩下的部分
                 df.drop(drop_last_cols, axis=1, inplace=True, errors='ignore')
                 # 增量存储
-                add_header = True
-                if os.path.exists(save_path): add_header = False
+                if is_first_invoke:
+                    # 存在则移除，注意会覆盖
+                    if os.path.exists(save_path):
+                        os.remove(save_path)
+                    is_first_invoke = False
+                    add_header = True
+                else:
+                    add_header = False
+                # 压缩存储
                 df.to_csv(save_path, index=None, mode="a", header=add_header, compression='gzip')  # 带表头
                 print("saved {} feature to {}".format(feature_name, save_path))
                 del df
@@ -200,8 +207,7 @@ def CalQAuc(df):
     auc_score = []
     for name, group in df.groupby('query_id'):
         try:
-            auc_score.append(roc_auc_score(group["label"], group["prediction"]
-                                       ))
+            auc_score.append(roc_auc_score(group["label"], group["prediction"]))
         except:
             auc_score.append(0.5) 
 
