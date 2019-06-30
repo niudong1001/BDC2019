@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-06 23:58:52
-@LastEditTime: 2019-06-23 20:51:04
+@LastEditTime: 2019-06-30 13:37:20
 '''
 import sys
 import numpy as np
@@ -16,8 +16,8 @@ import lightgbm as lgb
 
 class LigthGBM(object):
 
-    def __init__(self, num_leaves, min_data_in_leaf, max_bin, feature_fraction, 
-    bagging_fraction, bagging_freq, num_iterations, learning_rate, num_threads):
+    def __init__(self, num_leaves=31, min_data_in_leaf=20, max_bin=255, feature_fraction=1.0, 
+    bagging_fraction=1.0, bagging_freq=0, num_iterations=100, learning_rate=0.1, num_threads=4):
         self.HYPER_PARAM = {
             'num_threads':num_threads,
             'verbose':-1,
@@ -39,14 +39,14 @@ class LigthGBM(object):
         if valid_X is None or valid_y is None:
             self.bst = lgb.train(self.HYPER_PARAM,
                             train_set,
-                            verbose_eval=20,
+                            verbose_eval=50,
                             num_boost_round=self.num_boost_round)
         else :
             evals_result = {}
             valid_set = lgb.Dataset(valid_X, label=valid_y)
             self.bst = lgb.train(self.HYPER_PARAM,
                             train_set,
-                            verbose_eval=20,
+                            verbose_eval=50,
                             evals_result = evals_result,
                             valid_names=['valid'],
                             valid_sets=[valid_set],

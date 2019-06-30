@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-25 20:04:40
+@LastEditTime: 2019-06-30 13:35:44
 '''
 
 import pandas as pd
@@ -20,6 +20,8 @@ from sklearn.metrics import roc_auc_score
 import tqdm
 
 
+# OFFLINE = True
+# CAL_Q_AUC = True
 OFFLINE = False
 CAL_Q_AUC = False
 
@@ -63,13 +65,13 @@ def ReadCSV(filename, names=None, dtype=None, sep=",", iterator=True):
 
 
 # 批量读入数据，并apply处理函数
-def ProcessChunk(filename, func, names=None, dtype=None, chunk_size=CHUNK_SIZE):
+def ProcessChunk(filename, func, params=None, names=None, dtype=None, chunk_size=CHUNK_SIZE):
     reader = ReadCSV(filename, names, dtype, iterator=True)
     while True:
         try:
             tmp = reader.get_chunk(chunk_size)
             with Timer("process chunk"):
-                func(tmp)
+                func(tmp, params)
             # 删除chunk数据
             del tmp
             gc.collect()
@@ -134,9 +136,9 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func,
         basefilename = os.path.join(save_dir, 
         '%s_%s' % (prefix, feature_name))
         save_path = basefilename + ".csv.gz"
-        is_first_invoke = True
+        params = {"is_first_invoke":True}
 
-        def process(df):
+        def process(df, params):
             # 先丢弃不需要的部分，避免长时间占用内存
             df.drop(drop_first_cols, axis=1, inplace=True, errors='ignore')
             # 优化内存使用
@@ -148,11 +150,11 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func,
                 # 丢弃剩下的部分
                 df.drop(drop_last_cols, axis=1, inplace=True, errors='ignore')
                 # 增量存储
-                if is_first_invoke:
+                if params["is_first_invoke"]:
                     # 存在则移除，注意会覆盖
                     if os.path.exists(save_path):
                         os.remove(save_path)
-                    is_first_invoke = False
+                    params["is_first_invoke"] = False
                     add_header = True
                 else:
                     add_header = False
@@ -164,15 +166,18 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func,
 
         if process_chunkly:
             ProcessChunk(
-                source_csv, process, 
+                source_csv, process, params,
                 names=names, dtype=dtype,
                 chunk_size=chunk_size
             )
         else:
             process(
                 ReadCSV(source_csv, names=names, 
-                dtype=dtype, iterator=False)
+                dtype=dtype, iterator=False),
+                params
             )
+        
+        is_first_invoke = True
 
 # 分析csv文件，注意尽量不要操作大文件
 def AnalysisCSV(source_csv, print_rows=2, names=None, dtype=None):

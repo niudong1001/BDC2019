@@ -1,0 +1,69 @@
+feature importance:                                                column  importance
+72                   debug_trainVectorSpace_tfidfTLen         195
+47                                         query_freq         161
+75                 debug_trainVectorSpace_tfidfQTDiff         110
+40                debug_trainWord2vec_cosine_distance         103
+18            debug_trainTextMining_text_jaro_winkler          84
+78                  debug_trainVectorSpace_tfidfQTAvg          76
+61                debug_trainMagic_unigrams_difft-len          74
+49     debug_trainMagic_unigrams_diffSetSimdice_ratio          74
+67               debug_trainMagic_unigrams_diffqt-avg          69
+44             debug_trainWord2vec_cityblock_distance          68
+17                    debug_trainTextMining_text_jaro          67
+43              debug_trainWord2vec_canberra_distance          65
+46             debug_trainWord2vec_minkowski_distance          65
+76                  debug_trainVectorSpace_tfidfQTMax          59
+20           debug_trainTextMining_text_partial_ratio          59
+70  debug_trainVectorSpace_paired_manhattan_distances          58
+42            debug_trainWord2vec_braycurtis_distance          51
+68     debug_trainVectorSpace_paired_cosine_distances          51
+1                    debug_trainTextMining_text_t-len          50
+59  debug_trainMagic_trigrams_diffSetSimedit_seq_r...          49
+51  debug_trainMagic_unigrams_diffSetSimedit_seq_r...          49
+26      debug_trainTextMining_unichars_edit_seq_ratio          49
+55  debug_trainMagic_bigrams_diffSetSimedit_seq_ratio          47
+5                debug_trainTextMining_unigrams_t-len          45
+13              debug_trainTextMining_unigrams_qt-max          45
+2             debug_trainTextMining_text_qt-len-radio          44
+52  debug_trainMagic_unigrams_diffSetSimedit_set_r...          44
+21        debug_trainTextMining_text_token_sort_ratio          43
+11              debug_trainTextMining_unichars_qt-avg          41
+69  debug_trainVectorSpace_paired_euclidean_distances          40
+..                                                ...         ...
+60  debug_trainMagic_trigrams_diffSetSimedit_set_r...          26
+0                    debug_trainTextMining_text_q-len          25
+30      debug_trainTextMining_unigrams_edit_seq_ratio          25
+24          debug_trainTextMining_unichars_dice_ratio          23
+15              debug_trainTextMining_unigrams_qt-avg          22
+64              debug_trainMagic_unigrams_diffqt-diff          22
+35       debug_trainTextMining_bigrams_edit_set_ratio          21
+6         debug_trainTextMining_unigrams_qt-len-radio          19
+32           debug_trainTextMining_bigrams_dice_ratio          19
+9               debug_trainTextMining_unichars_qt-max          16
+57     debug_trainMagic_trigrams_diffSetSimdice_ratio          14
+19                   debug_trainTextMining_text_ratio          13
+77                  debug_trainVectorSpace_tfidfQTMin          10
+10              debug_trainTextMining_unichars_qt-min           9
+66               debug_trainMagic_unigrams_diffqt-min           9
+12             debug_trainTextMining_unigrams_qt-diff           8
+7         debug_trainTextMining_unigrams_tq-len-radio           7
+36          debug_trainTextMining_trigrams_dice_ratio           7
+4                debug_trainTextMining_unigrams_q-len           7
+48                          debug_trainMagic_localCTR           6
+39      debug_trainTextMining_trigrams_edit_set_ratio           5
+50  debug_trainMagic_unigrams_diffSetSimjaccard_ratio           0
+14              debug_trainTextMining_unigrams_qt-min           0
+29       debug_trainTextMining_unigrams_jaccard_ratio           0
+33        debug_trainTextMining_bigrams_jaccard_ratio           0
+58  debug_trainMagic_trigrams_diffSetSimjaccard_ratio           0
+37       debug_trainTextMining_trigrams_jaccard_ratio           0
+54   debug_trainMagic_bigrams_diffSetSimjaccard_ratio           0
+41               debug_trainWord2vec_jaccard_distance           0
+25       debug_trainTextMining_unichars_jaccard_ratio           0
+
+[79 rows x 2 columns]
+Valid Loss, AUC: 0.532276 0.675686
+----->Started 'cal q auc' block...
+Valid Q AUC: 0.5573007527050546
+----->Finished 'cal q auc' block, time used:133.49s.
+Saved train results to /home/kesci/work/stage2/output/train/lgb_gbdt_1561722296_auc0.675686_loss0.532276_std0.005311.npy

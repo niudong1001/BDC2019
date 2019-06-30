@@ -61,10 +61,10 @@ def light_gbm(X, y):
         'metric': 'binary_logloss',
         'feature_fraction': 0.8,
         'bagging_fraction': 0.8,
-        'silent': 1
+        'silent': -1
     }
-    NUM_ROUND = 80
-    EARLY_STOP = 40
+    NUM_ROUND = 200
+    EARLY_STOP = 20
     skf = StratifiedKFold(5, shuffle=True)
     importances = []
     for i, (train_index, dev_index) in enumerate(skf.split(X, y)):
@@ -76,8 +76,7 @@ def light_gbm(X, y):
                         verbose_eval=40,
                         valid_sets=[dev_data],
                         valid_names=['Dev'],
-                        num_boost_round=NUM_ROUND,
-                        early_stopping_rounds=EARLY_STOP)
+                        num_boost_round=NUM_ROUND)
         importances.append(bst.feature_importance())
     importances = np.stack(importances).mean(0)
     return normalize(importances)
@@ -89,13 +88,13 @@ def select_features(method, X, y, feature_cols, savedir):
     ranks = pd.DataFrame(index=feature_cols)
 
     if method == 'simple':
-        ranks['Ridge'] = ridge(X, y)
-        ranks['Lasso'] = lasso(X, y)
+        # ranks['Ridge'] = ridge(X, y)
+        # ranks['Lasso'] = lasso(X, y)
         ranks['Correlation'] = correlation(X, y)
         ranks['Linear Regression'] = linear_regression(X, y)
         # ranks['Stability Selection'] = stability_select(X, y)
-    elif method == 'ref':
-        ranks['REF'] = ref(X, y)
+    # elif method == 'ref':
+    #     ranks['REF'] = ref(X, y)
     elif method == 'lgb':
         ranks['LightGBM'] = light_gbm(X, y)
     elif method == 'rf':

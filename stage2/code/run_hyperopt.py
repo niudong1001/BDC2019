@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-07 22:12:50
-@LastEditTime: 2019-06-23 20:51:59
+@LastEditTime: 2019-06-30 13:37:30
 '''
 import os
 import json
@@ -80,6 +80,11 @@ def fn(params):
     losses, aucs = [], []
     train_predicts = np.empty_like(y).astype(float)
     # 分层采样，确保训练集，测试集中各类别样本的比例与原始数据集中相同
+    # stratified_folder = KFold(
+    #     n_splits=K_FOLD, 
+    #     random_state=0, 
+    #     shuffle=True
+    # )
     stratified_folder = StratifiedKFold(
         n_splits=K_FOLD, 
         random_state=0, 
@@ -138,19 +143,37 @@ def fn(params):
     return res
 
 
-def run_lgb_gbdt(comment, eval_num=5):
+def run_lgb_gbdt_fast(comment):
+    params = {
+        "model": "lgb_gbdt",
+        "num_threads": 4
+    }
+    
+    info = fn(params)
+    loss = round(info["loss"], 4)
+
+    if OFFLINE:
+        mode = "debug"
+    else:
+        mode = "online"
+
+    json.dump(info, open(OUTPUT_DIR+'lgb_gbdt_{}_{}_{}_{}.json'.format(mode, comment, loss, int(time.time())),'w'),
+        indent=1, cls=MyEncoder)
+
+
+def run_lgb_gbdt(comment, eval_num=20):
     trials = Trials()
     search_space = {
         'model': 'lgb_gbdt',
-        'num_threads':4,
-        'num_leaves': hp.quniform('num_leaves', 5, 30, 5),
+        'num_threads':8,
+        'num_leaves': hp.quniform('num_leaves', 20, 50, 5),
         'min_data_in_leaf': hp.quniform('min_data_in_leaf', 10, 50, 10),
         'feature_fraction': hp.quniform('feature_fraction', 0.6, 1.0, 0.1),
         'bagging_fraction': hp.quniform('bagging_fraction', 0.6, 1.0, 0.1),
-        'bagging_freq': hp.quniform('bagging_freq', 0, 10, 2),
-        'max_bin': hp.choice('max_bin', [15, 63, 255, 1023]),
+        'bagging_freq': hp.quniform('bagging_freq', 0, 20, 2),
+        'max_bin': hp.choice('max_bin', [63, 255, 511, 1023]),
         'learning_rate': hp.quniform('learning_rate', 0.1, 0.2, 0.01),
-        'num_iterations': hp.quniform('num_iterations', 50, 200, 25)
+        'num_iterations': hp.quniform('num_iterations', 100, 300, 50)
     }
     best_param = fmin(fn, space=search_space,
                         algo=tpe.suggest,
@@ -168,6 +191,43 @@ def run_lgb_gbdt(comment, eval_num=5):
         mode = "online"
 
     json.dump(info, open(OUTPUT_DIR+'lgb_gbdt_{}_{}_{}_{}.json'.format(mode, comment, loss, int(time.time())),'w'),
+        indent=1, cls=MyEncoder)
+
+
+def run_lgb_dart(comment, eval_num=10):
+    trials = Trials()
+    search_space = {
+        'model': 'lgb_dart',
+        'num_threads': 4, 
+        'drop_rate': hp.quniform('drop_rate', 0.5, 1, 0.1),
+        'skip_drop': hp.quniform('skip_drop', 0.5, 1, 0.1),
+        'num_leaves': hp.quniform('num_leaves', 15, 50, 5),
+        'min_data_in_leaf': hp.quniform('min_data_in_leaf', 10, 50, 10),
+        'feature_fraction': hp.quniform('feature_fraction', 0.5, 1.0, 0.1),
+        'bagging_fraction': hp.quniform('bagging_fraction', 0.5, 1.0, 0.1),
+        'bagging_freq': hp.quniform('bagging_freq', 0, 50, 10),
+        'max_bin': hp.choice('max_bin', [63, 255, 1023]),
+        'learning_rate': hp.quniform('learning_rate', 0.01, 1, 0.01),
+        'num_iterations': hp.quniform('num_iterations', 100, 500, 50)
+    }
+    best_param = fmin(fn,
+                      space=search_space,
+                      algo=tpe.suggest,
+                      max_evals=eval_num,
+                      trials=trials)
+
+
+    info = trials.best_trial
+    info['param'] = best_param
+    
+    loss = round(info["result"]["loss"], 4)
+
+    if OFFLINE:
+        mode = "debug"
+    else:
+        mode = "online"
+
+    json.dump(info, open(OUTPUT_DIR+'lgb_gbdtDart_{}_{}_{}_{}.json'.format(mode, comment, loss, int(time.time())),'w'),
         indent=1, cls=MyEncoder)
 
 

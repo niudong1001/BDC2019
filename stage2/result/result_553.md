@@ -889,3 +889,55 @@ Valid Loss, AUC: 0.534116 0.672921
 Saved train results to /home/kesci/work/stage2/output/train/lgb_gbdt_1561576722_auc0.672921_loss0.534116_std0.003944.npy
 Saved test results to /home/kesci/work/stage2/output/test/lgb_gbdt_1561576722_auc0.672921_loss0.534116_std0.003944.npy
 100%|██████████| 10/10 [2:47:04<00:00, 961.84s/it, best loss: 0.5326264305315684]
+
+
+70  debug_trainVectorSpace_paired_manhattan_distances         195
+47                                         query_freq         110
+40                debug_trainWord2vec_cosine_distance          64
+67               debug_trainMagic_unigrams_diffqt-avg          60
+68     debug_trainVectorSpace_paired_cosine_distances          52
+18            debug_trainTextMining_text_jaro_winkler          50
+69  debug_trainVectorSpace_paired_euclidean_distances          48
+49     debug_trainMagic_unigrams_diffSetSimdice_ratio          46
+23         debug_trainTextMining_text_token_set_ratio          42
+20           debug_trainTextMining_text_partial_ratio          38
+61                debug_trainMagic_unigrams_difft-len          37
+59  debug_trainMagic_trigrams_diffSetSimedit_seq_r...          35
+15              debug_trainTextMining_unigrams_qt-avg          35
+52  debug_trainMagic_unigrams_diffSetSimedit_set_r...          34
+17                    debug_trainTextMining_text_jaro          34
+
+
+70  debug_trainVectorSpace_paired_manhattan_distances         152
+47                                         query_freq          87
+40                debug_trainWord2vec_cosine_distance          68
+67               debug_trainMagic_unigrams_diffqt-avg          65
+20           debug_trainTextMining_text_partial_ratio          49
+68     debug_trainVectorSpace_paired_cosine_distances          47
+15              debug_trainTextMining_unigrams_qt-avg          45
+18            debug_trainTextMining_text_jaro_winkler          39
+49     debug_trainMagic_unigrams_diffSetSimdice_ratio          38
+69  debug_trainVectorSpace_paired_euclidean_distances          36
+42            debug_trainWord2vec_braycurtis_distance          35
+43              debug_trainWord2vec_canberra_distance          35
+5                debug_trainTextMining_unigrams_t-len          34
+23         debug_trainTextMining_text_token_set_ratio          33
+52  debug_trainMagic_unigrams_diffSetSimedit_set_r...          33
+
+
+70  debug_trainVectorSpace_paired_manhattan_distances         149
+47                                         query_freq          79
+40                debug_trainWord2vec_cosine_distance          63
+67               debug_trainMagic_unigrams_diffqt-avg          51
+23         debug_trainTextMining_text_token_set_ratio          50
+18            debug_trainTextMining_text_jaro_winkler          50
+69  debug_trainVectorSpace_paired_euclidean_distances          49
+20           debug_trainTextMining_text_partial_ratio          45
+21        debug_trainTextMining_text_token_sort_ratio          45
+15              debug_trainTextMining_unigrams_qt-avg          42
+51  debug_trainMagic_unigrams_diffSetSimedit_seq_r...          39
+42            debug_trainWord2vec_braycurtis_distance          38
+49     debug_trainMagic_unigrams_diffSetSimdice_ratio          37
+59  debug_trainMagic_trigrams_diffSetSimedit_seq_r...          37
+68     debug_trainVectorSpace_paired_cosine_distances          37
+11              debug_trainTextMining_unichars_qt-avg          33
