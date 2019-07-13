@@ -2,7 +2,7 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-01 11:19:50
-@LastEditTime: 2019-06-30 13:35:44
+@LastEditTime: 2019-07-13 17:07:03
 '''
 
 import pandas as pd
@@ -20,80 +20,25 @@ from sklearn.metrics import roc_auc_score
 import tqdm
 
 
-# OFFLINE = True
-# CAL_Q_AUC = True
-OFFLINE = False
-CAL_Q_AUC = False
-
-
-ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
-# 关于数据类型所占内存（https://blog.csdn.net/xingkong_dahai/article/details/77140918）; 具体转换参考（https://www.jianshu.com/p/d54fc84f3b42）
-ORI_TRAIN_DTYPE = {"query_id":np.uint32, "query":np.object, "query_title_id":np.uint32, "title":np.object, "label":np.uint8}
-
-ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
-ORI_TEST_DTYPE = {"query_id":np.uint32, "query":np.object, "query_title_id":np.uint32, "title":np.object}
-
-
 CHUNK_SIZE = 1000000
 
+ORI_TRAIN_NAMES = ["query_id", "query", "query_title_id", "title", "label"]
+ORI_TEST_NAMES = ["query_id", "query", "query_title_id", "title"]
 
-# Record the consumed time when ran a code block.
+
 class Timer(object):
     def __init__(self, block_name, prefix="----->"):
         self.block_name = block_name
         self.prefix = prefix
 
     def __enter__(self):
-        print(self.prefix+"Started '"+self.block_name+"' block...")
+        print(self.prefix+"started '"+self.block_name+"' block...")
         self.time_start = time.time()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         elapsed_time = round(time.time() - self.time_start, 2)
-        print(self.prefix+"Finished '"+self.block_name+"' block, time used:" + str(elapsed_time)+"s.")
+        print(self.prefix+"finished '"+self.block_name+"' block, time used:" + str(elapsed_time)+"s.")
 
-
-# 读取CSV文件
-def ReadCSV(filename, names=None, dtype=None, sep=",", iterator=True):
-    # http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv
-    return pd.read_csv(
-        filename, 
-        names=names,
-        dtype=dtype,
-        sep=sep,
-        iterator=iterator
-    )
-
-
-# 批量读入数据，并apply处理函数
-def ProcessChunk(filename, func, params=None, names=None, dtype=None, chunk_size=CHUNK_SIZE):
-    reader = ReadCSV(filename, names, dtype, iterator=True)
-    while True:
-        try:
-            tmp = reader.get_chunk(chunk_size)
-            with Timer("process chunk"):
-                func(tmp, params)
-            # 删除chunk数据
-            del tmp
-            gc.collect()
-        except StopIteration:
-            print("finished process.")
-            return
-
-
-# Json转换的类
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')  
-        else:
-            return super(MyEncoder, self).default(obj)
-            
 
 # 减少df的内存
 def ReduceMemUsage(df, verbose=True):
@@ -125,11 +70,50 @@ def ReduceMemUsage(df, verbose=True):
     return df
 
 
+# 读取CSV文件
+def ReadCSV(filename, names=None, sep=",", iterator=True):
+    # http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv
+    return pd.read_csv(
+        filename, 
+        names=names,
+        sep=sep,
+        iterator=iterator
+    )
+
+
+# 批量读入数据，并apply处理函数
+def ProcessChunk(filename, func, chunk_size, params=None, names=None):
+    reader = ReadCSV(filename, names=names, iterator=True)
+    with Timer("process chunk"):
+        while True:
+            try:
+                block = reader.get_chunk(chunk_size)
+                func(block, params)
+                del block
+                gc.collect()
+            except StopIteration:
+                print("finished process.")
+                return
+
+
+# Json转换的类
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')  
+        else:
+            return super(MyEncoder, self).default(obj)
+
+
 # 提取feature函数
 def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func, 
-    names=None, dtype=None, process_chunkly=True, chunk_size=CHUNK_SIZE, 
-    drop_first_cols=['query_id', 'query_title_id', 'label'], 
-    drop_last_cols=['query', 'title']):
+    names=None, process_chunkly=True, chunk_size=None, drop_first_cols=['query_id', 'query_title_id', 'label'], drop_last_cols=['query', 'title'], reduce_mem=True):
 
     with Timer("extract {} feature".format(feature_name)):
         
@@ -142,9 +126,10 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func,
             # 先丢弃不需要的部分，避免长时间占用内存
             df.drop(drop_first_cols, axis=1, inplace=True, errors='ignore')
             # 优化内存使用
-            df = ReduceMemUsage(df)
+            if reduce_mem:
+                df = ReduceMemUsage(df)
             # 提取特征
-            df = process_func(df, prefix, basefilename)
+            df = process_func(df, save_dir, prefix, feature_name)
             # 如果有结果返回
             if type(df) == pd.core.frame.DataFrame:
                 # 丢弃剩下的部分
@@ -158,66 +143,58 @@ def ExtractFeature(source_csv, save_dir, prefix, feature_name, process_func,
                     add_header = True
                 else:
                     add_header = False
-                # 压缩存储
-                df.to_csv(save_path, index=None, mode="a", header=add_header, compression='gzip')  # 带表头
+                # 压缩存储, 带表头
+                df.to_csv(save_path, index=None, mode="a", header=add_header, compression='gzip')
                 print("saved {} feature to {}".format(feature_name, save_path))
                 del df
                 gc.collect()
 
         if process_chunkly:
             ProcessChunk(
-                source_csv, process, params,
-                names=names, dtype=dtype,
-                chunk_size=chunk_size
+                source_csv, func=process, 
+                chunk_size=chunk_size, 
+                params=params,
+                names=names
             )
         else:
             process(
-                ReadCSV(source_csv, names=names, 
-                dtype=dtype, iterator=False),
+                ReadCSV(
+                    source_csv, 
+                    names=names,
+                    iterator=False
+                ),
                 params
             )
-        
-        is_first_invoke = True
+
 
 # 分析csv文件，注意尽量不要操作大文件
-def AnalysisCSV(source_csv, print_rows=2, names=None, dtype=None):
-    tmp = ReadCSV(source_csv, names=names, dtype=dtype, iterator=False)
+def AnalysisCSV(source_csv, print_rows=2, names=None):
+    data = ReadCSV(source_csv, names=names, iterator=False)
     print("--->file shape:")
-    print(tmp.shape)
+    print(data.shape)
     print("--->{} rows of file:".format(print_rows))
-    print(tmp[:print_rows])
+    print(data[:print_rows])
     print("--->file info:")
-    print(tmp.info())
+    print(data.info())
     print("--->file describe:")
-    print(tmp.describe())
-    del tmp
+    print(data.describe())
+    del data
     gc.collect()
-    
-    
-def CalQAuc(df):
-    # invalid_count = 0
-    # query_ids = df['query_id'].unique()
-    # aucs = []
-    # for query_id in query_ids:
-    #     current = df[df['query_id'] == query_id]
-    #     if sum(current['label']) not in [0, len(current['label'])]:
-    #         auc = roc_auc_score(current['label'], current['prediction'])  # 这里计算qauc
-    #     else:
-    #         auc = 0.5
-    #         invalid_count += 1
-    #     aucs.append(auc)
-    # print(f'q_auc invalid_count = {invalid_count}')
-    # return np.mean(aucs)
 
+
+def CalQAuc(df):
     auc_score = []
     for name, group in df.groupby('query_id'):
         try:
             auc_score.append(roc_auc_score(group["label"], group["prediction"]))
         except:
-            auc_score.append(0.5) 
-
+            auc_score.append(0.5)
     return np.mean(auc_score)
 
 
-def cal_sim(a, b, func):
+def FuncMap2(func, a, b):
     return list(map(func, a, b))
+
+
+def FuncMap1(func, a):
+    return list(map(func, a))

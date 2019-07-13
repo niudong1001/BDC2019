@@ -2,25 +2,24 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-06 23:58:52
-@LastEditTime: 2019-06-30 13:37:20
+@LastEditTime: 2019-07-12 22:48:23
 '''
 import sys
 import numpy as np
-from .config import GLOBAL_DIR
+from .config import FEAT_DIR, UTILS_DIR
 # from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 # from sklearn.metrics import log_loss
-sys.path.append(GLOBAL_DIR)
-from helper import Timer
+sys.path.append(UTILS_DIR)
 import lightgbm as lgb
 
 
 class LigthGBM(object):
-
-    def __init__(self, num_leaves=31, min_data_in_leaf=20, max_bin=255, feature_fraction=1.0, 
-    bagging_fraction=1.0, bagging_freq=0, num_iterations=100, learning_rate=0.1, num_threads=4):
+    
+    def __init__(self, num_leaves=31, min_data_in_leaf=20, max_bin=255, feature_fraction=1.0, bagging_fraction=1.0, bagging_freq=0, 
+    num_iterations=100, learning_rate=0.1, num_threads=4):
         self.HYPER_PARAM = {
-            'num_threads':num_threads,
             'verbose':-1,
+            'num_threads':num_threads,
             'objective': 'binary',
             'metric': ['binary_logloss'],
             'num_leaves':int(num_leaves),
@@ -31,15 +30,14 @@ class LigthGBM(object):
             'max_bin':int(max_bin),
             'learning_rate':learning_rate
         }
-        self.bst = None
         self.num_boost_round = int(num_iterations)
+        self.bst = None
 
     def fit(self, X, y, valid_X=None, valid_y=None):
         train_set = lgb.Dataset(X, label=y)
         if valid_X is None or valid_y is None:
             self.bst = lgb.train(self.HYPER_PARAM,
-                            train_set,
-                            verbose_eval=50,
+                            train_set,verbose_eval=50,
                             num_boost_round=self.num_boost_round)
         else :
             evals_result = {}
