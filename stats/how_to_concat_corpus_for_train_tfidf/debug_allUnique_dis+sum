@@ -1,0 +1,189 @@
+{
+ "in_train_feature": "/home/kesci/work/common/features/nd_debugTrainConcatFeaturesV1.npy",
+ "in_train_label": "/home/kesci/work/common/util_train/train_label_flast_100w.npy",
+ "in_feature_names": "/home/kesci/work/common/features/nd_debugTrainConcatFeaturesV1_name.csv",
+ "in_train_qid": "/home/kesci/work/common/util_train/train_qid_flast_100w.npy",
+ "in_test_qid": "/home/kesci/work/common/util_train/train_qid_flast_40w.npy",
+ "in_test_feature": "/home/kesci/work/common/features/nd_debugTestConcatFeaturesV1.npy",
+ "in_test_label": "/home/kesci/work/common/util_train/train_label_flast_40w.npy"
+}
+X shape: (1000000, 5)
+X (2 rows):
+[[2.373  2.38   0.896  1.339  4.17  ]
+ [2.373  3.844  0.6055 1.101  4.21  ]]
+y shape: (1000000,)
+y (10 rows): [0 0 1 0 0 0 1 0 1 0]
+test X shape: (400000, 5)
+test X (2 rows):
+[[1.913  5.617  0.7046 1.187  6.473 ]
+ [1.913  4.64   0.6357 1.128  5.254 ]]
+train qid shape: (1000000,)
+train qid (10 rows):
+[4847148 4847148 4847148 4847149 4847149 4847149 4847149 4847149 4847149
+ 4847149]
+test qid shape: (400000,)
+test qid (10 rows):
+[4946681 4946681 4946681 4946681 4946681 4946681 4946681 4946681 4946682
+ 4946682]
+test label shape: (400000,)
+test label (10 rows):
+[0 0 0 0 0 0 0 0 0 1]
+  
+{                                                  
+ "bagging_fraction": 0.9,
+ "bagging_freq": 6.0,
+ "feature_fraction": 1.0,
+ "learning_rate": 0.12,
+ "max_bin": 63,
+ "min_data_in_leaf": 30.0,
+ "num_iterations": 100.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.466617              
+[100]	valid's binary_logloss: 0.466646             
+混淆矩阵：                                              
+[[245429     38]                                   
+ [ 54458     75]]
+feature importance:                                
+                                              column  importance
+0           debug_trainVectorSpace_tfidfVecFeat_QSum         943
+1           debug_trainVectorSpace_tfidfVecFeat_TSum         757
+4  debug_trainVectorSpace_tfidfVecFeat_paired_man...         626
+2  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         545
+3  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         529
+Valid Loss and AUC: 0.466981 0.586739              
+----->started 'cal valid qauc' block...            
+Valid QAUC: 0.561714                               
+----->finished 'cal valid qauc' block, time used:35.07s.
+----->started 'cal test qauc' block...             
+Test QAUC: 0.557632                                
+----->finished 'cal test qauc' block, time used:48.54s.
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.561714_loss0.466981_std0.000977_0801130612.npy
+{                                                                 
+ "bagging_fraction": 1.0,
+ "bagging_freq": 2.0,
+ "feature_fraction": 0.9,
+ "learning_rate": 0.12,
+ "max_bin": 255,
+ "min_data_in_leaf": 40.0,
+ "num_iterations": 140.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.466327                             
+[100]	valid's binary_logloss: 0.466392                            
+混淆矩阵：                                                             
+[[245424     43]                                                  
+ [ 54442     91]]
+feature importance:                                               
+                                              column  importance  
+0           debug_trainVectorSpace_tfidfVecFeat_QSum        1346
+1           debug_trainVectorSpace_tfidfVecFeat_TSum        1176
+4  debug_trainVectorSpace_tfidfVecFeat_paired_man...        1038
+3  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         980
+2  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         920
+Valid Loss and AUC: 0.466647 0.587534                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.562647                                              
+----->finished 'cal valid qauc' block, time used:34.73s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.557512                                               
+----->finished 'cal test qauc' block, time used:46.52s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.562647_loss0.466647_std0.000890_0801130743.npy
+{                                                                 
+ "bagging_fraction": 0.6000000000000001,
+ "bagging_freq": 6.0,
+ "feature_fraction": 0.8,
+ "learning_rate": 0.18,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "num_iterations": 180.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.466742                             
+[100]	valid's binary_logloss: 0.466867                            
+[150]	valid's binary_logloss: 0.467                               
+混淆矩阵：                                                             
+[[245411     56]                                                  
+ [ 54442     91]]
+feature importance:                                               
+                                              column  importance  
+1           debug_trainVectorSpace_tfidfVecFeat_TSum        1039
+0           debug_trainVectorSpace_tfidfVecFeat_QSum         978
+4  debug_trainVectorSpace_tfidfVecFeat_paired_man...         850
+2  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         748
+3  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         705
+Valid Loss and AUC: 0.466987 0.584355                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.558506                                              
+----->finished 'cal valid qauc' block, time used:34.51s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.55629                                                
+----->finished 'cal test qauc' block, time used:48.55s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.558506_loss0.466987_std0.000572_0801130913.npy
+{                                                                 
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 10.0,
+ "feature_fraction": 0.9,
+ "learning_rate": 0.14,
+ "max_bin": 255,
+ "min_data_in_leaf": 30.0,
+ "num_iterations": 140.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.46649                              
+[100]	valid's binary_logloss: 0.466522                            
+混淆矩阵：                                                             
+[[245411     56]                                                  
+ [ 54446     87]]
+feature importance:                                               
+                                              column  importance  
+0           debug_trainVectorSpace_tfidfVecFeat_QSum         854
+1           debug_trainVectorSpace_tfidfVecFeat_TSum         716
+4  debug_trainVectorSpace_tfidfVecFeat_paired_man...         648
+3  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         576
+2  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         566
+Valid Loss and AUC: 0.466759 0.586397                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.561598                                              
+----->finished 'cal valid qauc' block, time used:34.66s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.556809                                               
+----->finished 'cal test qauc' block, time used:46.22s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.561598_loss0.466759_std0.000819_0801131045.npy
+{                                                                 
+ "bagging_fraction": 0.6000000000000001,
+ "bagging_freq": 2.0,
+ "feature_fraction": 0.9,
+ "learning_rate": 0.14,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "num_iterations": 180.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.466702                             
+[100]	valid's binary_logloss: 0.466805                            
+[150]	valid's binary_logloss: 0.467035                            
+混淆矩阵：                                                             
+[[245419     48]                                                  
+ [ 54448     85]]
+feature importance:                                               
+                                              column  importance  
+1           debug_trainVectorSpace_tfidfVecFeat_TSum        1675
+0           debug_trainVectorSpace_tfidfVecFeat_QSum        1629
+4  debug_trainVectorSpace_tfidfVecFeat_paired_man...        1395
+2  debug_trainVectorSpace_tfidfVecFeat_paired_cos...        1213
+3  debug_trainVectorSpace_tfidfVecFeat_paired_euc...        1108
+Valid Loss and AUC: 0.466986 0.584351                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.556522                                              
+----->finished 'cal valid qauc' block, time used:36.08s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.555385                                               
+----->finished 'cal test qauc' block, time used:46.19s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.556522_loss0.466986_std0.000653_0801131216.npy
+100%|██████████| 5/5 [07:37<00:00, 91.92s/it, best loss: 0.466647]

@@ -2,21 +2,19 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-06 23:58:52
-@LastEditTime: 2019-07-12 22:48:23
+@LastEditTime: 2019-08-09 21:03:53
 '''
 import sys
 import numpy as np
-from .config import FEAT_DIR, UTILS_DIR
-# from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
-# from sklearn.metrics import log_loss
-sys.path.append(UTILS_DIR)
 import lightgbm as lgb
 
 
 class LigthGBM(object):
     
-    def __init__(self, num_leaves=31, min_data_in_leaf=20, max_bin=255, feature_fraction=1.0, bagging_fraction=1.0, bagging_freq=0, 
-    num_iterations=100, learning_rate=0.1, num_threads=4):
+    def __init__(self, num_leaves=31, min_data_in_leaf=20, max_bin=255, 
+    feature_fraction=1.0, bagging_fraction=1.0, bagging_freq=0, 
+    num_iterations=100, learning_rate=0.1, num_threads=10, lambda_l1=0,
+    lambda_l2=0, min_gain_to_split=0):
         self.HYPER_PARAM = {
             'verbose':-1,
             'num_threads':num_threads,
@@ -28,7 +26,13 @@ class LigthGBM(object):
             'bagging_fraction':bagging_fraction,
             'bagging_freq':int(bagging_freq),
             'max_bin':int(max_bin),
-            'learning_rate':learning_rate
+            'learning_rate':learning_rate,
+            "device": "gpu",
+            "gpu_platform_id": 0,
+            "gpu_divice_id": 0,
+            "lambda_l1": lambda_l1,
+            "lambda_l2": lambda_l2,
+            "min_gain_to_split": min_gain_to_split
         }
         self.num_boost_round = int(num_iterations)
         self.bst = None

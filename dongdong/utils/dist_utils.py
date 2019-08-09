@@ -2,14 +2,55 @@
 @Author: niudong
 @LastEditors: niudong
 @Date: 2019-06-03 21:56:31
-@LastEditTime: 2019-06-30 13:35:31
+@LastEditTime: 2019-08-09 21:05:24
 '''
 import lzma
 import Levenshtein
 from np_utils import try_divide
 import numpy as np
+from difflib import SequenceMatcher
 from scipy.spatial.distance import cosine, jaccard, cityblock, canberra, euclidean, minkowski, braycurtis, mahalanobis
 
+def edit_dist(str1, str2):
+    try:
+        # very fast
+        # http://stackoverflow.com/questions/14260126/how-python-levenshtein-ratio-is-computed
+        import Levenshtein
+        d = Levenshtein.distance(str1, str2) / float(max(len(str1), len(str2)))
+    except:
+        # https://docs.python.org/2/library/difflib.html
+        d = 1. - SequenceMatcher(lambda x: x == " ", str1, str2).ratio()
+    return d
+
+def is_str_match(str1, str2, threshold=0.8):
+    assert threshold >= 0.0 and threshold <= 1.0, "Wrong threshold."
+    if float(threshold) == 1.0:
+        return str1 == str2
+    else:
+        return (1. - edit_dist(str1, str2)) >= threshold
+
+def longest_match_size(str1, str2):
+    sq = SequenceMatcher(lambda x: x == " ", str1, str2)
+    match = sq.find_longest_match(0, len(str1), 0, len(str2))
+    return match.size
+
+def longest_match_ratio(str1, str2):
+    sq = SequenceMatcher(lambda x: x == " ", str1, str2)
+    match = sq.find_longest_match(0, len(str1), 0, len(str2))
+    return try_divide(match.size, min(len(str1), len(str2)))
+
+def compression_dist(x, y, l_x=None, l_y=None):
+    if x == y:
+        return 0
+    x_b = x.encode('utf-8')
+    y_b = y.encode('utf-8')
+    if l_x is None:
+        l_x = len(lzma.compress(x_b))
+        l_y = len(lzma.compress(y_b))
+    l_xy = len(lzma.compress(x_b + y_b))
+    l_yx = len(lzma.compress(y_b + x_b))
+    dist = try_divide(min(l_xy, l_yx) - min(l_x, l_y), max(l_x, l_y))
+    return dist
 
 # One line time: 36.7 µs ± 388 ns
 def edit_set_ratio(a, b):
