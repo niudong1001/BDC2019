@@ -1,0 +1,77 @@
+{                                                  
+ "bagging_fraction": 1.0,
+ "bagging_freq": 8.0,
+ "feature_fraction": 0.7000000000000001,
+ "learning_rate": 0.19,
+ "max_bin": 63,
+ "min_data_in_leaf": 30.0,
+ "num_iterations": 140.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.464378              
+[100]	valid's binary_logloss: 0.464235             
+混淆矩阵：                                              
+[[12292665     1805]                               
+ [ 2701106     4424]]
+feature importance:                                
+                                              column  importance
+0          online_trainVectorSpace_tfidfVecFeat_QSum         730
+2  online_trainVectorSpace_tfidfVecFeat_paired_co...         706
+1          online_trainVectorSpace_tfidfVecFeat_TSum         690
+4  online_trainVectorSpace_tfidfVecFeat_paired_ma...         622
+3  online_trainVectorSpace_tfidfVecFeat_paired_eu...         612
+Valid Loss and AUC: 0.464523 0.588852              
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_auc0.588852_loss0.464523_std0.000839_0801135115.npy
+{                                                                  
+ "bagging_fraction": 0.8,
+ "bagging_freq": 16.0,
+ "feature_fraction": 0.6000000000000001,
+ "learning_rate": 0.11,
+ "max_bin": 255,
+ "min_data_in_leaf": 20.0,
+ "num_iterations": 160.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.464298                              
+[100]	valid's binary_logloss: 0.464116                             
+[150]	valid's binary_logloss: 0.464017                             
+混淆矩阵：                                                              
+[[12292483     1987]                                               
+ [ 2700703     4827]]
+feature importance:                                                
+                                              column  importance   
+0          online_trainVectorSpace_tfidfVecFeat_QSum         974
+1          online_trainVectorSpace_tfidfVecFeat_TSum         765
+2  online_trainVectorSpace_tfidfVecFeat_paired_co...         740
+3  online_trainVectorSpace_tfidfVecFeat_paired_eu...         708
+4  online_trainVectorSpace_tfidfVecFeat_paired_ma...         653
+Valid Loss and AUC: 0.464503 0.58911                               
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_auc0.589110_loss0.464503_std0.001047_0801135721.npy
+{                                                                  
+ "bagging_fraction": 0.9,
+ "bagging_freq": 18.0,
+ "feature_fraction": 0.8,
+ "learning_rate": 0.18,
+ "max_bin": 255,
+ "min_data_in_leaf": 40.0,
+ "num_iterations": 160.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.463898                              
+[100]	valid's binary_logloss: 0.463734                             
+[150]	valid's binary_logloss: 0.463629                             
+混淆矩阵：                                                              
+[[12292393     2077]                                               
+ [ 2700617     4913]]
+feature importance:                                                
+                                              column  importance   
+0          online_trainVectorSpace_tfidfVecFeat_QSum        1537
+1          online_trainVectorSpace_tfidfVecFeat_TSum        1507
+2  online_trainVectorSpace_tfidfVecFeat_paired_co...        1153
+4  online_trainVectorSpace_tfidfVecFeat_paired_ma...        1025
+3  online_trainVectorSpace_tfidfVecFeat_paired_eu...        1018
+Valid Loss and AUC: 0.463997 0.591377                              
+ 40%|████      | 2/5 [16:22<17:17, 345.78s/it, best loss: 0.464503]

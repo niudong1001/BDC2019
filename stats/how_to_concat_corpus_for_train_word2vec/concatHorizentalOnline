@@ -1,0 +1,171 @@
+Epoch 1, loss: 69566760.00, time: 18min 33s
+Better model. Best loss: 69566760.00
+Model /home/kesci/work/common/util_models/word2vec_online_concatHorizontal.model save done!
+Epoch 2, loss: 23542272.00, time: 18min 24s
+Better model. Best loss: 23542272.00
+Model /home/kesci/work/common/util_models/word2vec_online_concatHorizontal.model save done!
+Epoch 3, loss: 24322496.00, time: 18min 20s
+Epoch 4, loss: 16786200.00, time: 18min 19s
+Better model. Best loss: 16786200.00
+Model /home/kesci/work/common/util_models/word2vec_online_concatHorizontal.model save done!
+Epoch 5, loss: 0.00, time: 18min 17s
+Epoch 6, loss: 0.00, time: 18min 18s
+Epoch 7, loss: 0.00, time: 18min 20s
+Epoch 8, loss: 0.00, time: 18min 20s
+Epoch 9, loss: 0.00, time: 18min 19s
+Epoch 10, loss: 0.00, time: 18min 17s
+Epoch 11, loss: 0.00, time: 18min 19s
+Epoch 12, loss: 0.00, time: 18min 20s
+Epoch 13, loss: 0.00, time: 18min 20s
+Epoch 14, loss: 0.00, time: 18min 20s
+Epoch 15, loss: 0.00, time: 18min 20s
+Epoch 16, loss: 0.00, time: 18min 18s
+Epoch 17, loss: 0.00, time: 18min 18s
+
+{                                                  
+ "bagging_fraction": 0.9,
+ "bagging_freq": 2.0,
+ "feature_fraction": 0.6000000000000001,
+ "learning_rate": 0.15,
+ "max_bin": 63,
+ "min_data_in_leaf": 30.0,
+ "num_iterations": 140.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.469201              
+[100]	valid's binary_logloss: 0.469218             
+混淆矩阵：                                              
+[[245406     61]                                   
+ [ 54462     71]]
+feature importance:                                
+                              column  importance   
+2  debug_word2vec_cityblock_distance        1734
+1  debug_word2vec_euclidean_distance        1700
+0     debug_word2vec_cosine_distance        1326
+Valid Loss and AUC: 0.469324 0.570406              
+----->started 'cal valid qauc' block...            
+Valid QAUC: 0.547503                               
+----->finished 'cal valid qauc' block, time used:33.69s.
+----->started 'cal test qauc' block...             
+Test QAUC: 0.546962                                
+----->finished 'cal test qauc' block, time used:47.07s.
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.547503_loss0.469324_std0.000508_0731233850.npy
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 4.0,
+ "feature_fraction": 0.7000000000000001,
+ "learning_rate": 0.13,
+ "max_bin": 63,
+ "min_data_in_leaf": 50.0,
+ "num_iterations": 120.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.469167                             
+[100]	valid's binary_logloss: 0.469316                            
+混淆矩阵：                                                             
+[[245406     61]                                                  
+ [ 54462     71]]
+feature importance:                                               
+                              column  importance                  
+2  debug_word2vec_cityblock_distance        1682
+1  debug_word2vec_euclidean_distance        1659
+0     debug_word2vec_cosine_distance        1339
+Valid Loss and AUC: 0.469344 0.569834                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.546246                                              
+----->finished 'cal valid qauc' block, time used:35.34s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.546059                                               
+----->finished 'cal test qauc' block, time used:47.75s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.546246_loss0.469344_std0.000496_0731234023.npy
+{                                                                 
+ "bagging_fraction": 0.6000000000000001,
+ "bagging_freq": 2.0,
+ "feature_fraction": 0.9,
+ "learning_rate": 0.17,
+ "max_bin": 63,
+ "min_data_in_leaf": 50.0,
+ "num_iterations": 120.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.469284                             
+[100]	valid's binary_logloss: 0.469548                            
+混淆矩阵：                                                             
+[[245406     61]                                                  
+ [ 54462     71]]
+feature importance:                                               
+                              column  importance                  
+1  debug_word2vec_euclidean_distance        1646
+2  debug_word2vec_cityblock_distance        1555
+0     debug_word2vec_cosine_distance        1479
+Valid Loss and AUC: 0.469438 0.567882                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.544189                                              
+----->finished 'cal valid qauc' block, time used:33.75s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.545043                                               
+----->finished 'cal test qauc' block, time used:44.93s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.544189_loss0.469438_std0.000406_0731234155.npy
+{                                                                 
+ "bagging_fraction": 1.0,
+ "bagging_freq": 12.0,
+ "feature_fraction": 0.7000000000000001,
+ "learning_rate": 0.11,
+ "max_bin": 255,
+ "min_data_in_leaf": 40.0,
+ "num_iterations": 180.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.46905                              
+[100]	valid's binary_logloss: 0.469103                            
+[150]	valid's binary_logloss: 0.469193                            
+混淆矩阵：                                                             
+[[245467      0]                                                  
+ [ 54533      0]]
+feature importance:                                               
+                              column  importance                  
+2  debug_word2vec_cityblock_distance        1652
+1  debug_word2vec_euclidean_distance        1558
+0     debug_word2vec_cosine_distance        1110
+Valid Loss and AUC: 0.469227 0.570864                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.547869                                              
+----->finished 'cal valid qauc' block, time used:34.87s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.546411                                               
+----->finished 'cal test qauc' block, time used:45.01s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.547869_loss0.469227_std0.000474_0731234323.npy
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 6.0,
+ "feature_fraction": 0.9,
+ "learning_rate": 0.13,
+ "max_bin": 63,
+ "min_data_in_leaf": 20.0,
+ "num_iterations": 140.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.469133                             
+[100]	valid's binary_logloss: 0.469265                            
+混淆矩阵：                                                             
+[[245406     61]                                                  
+ [ 54462     71]]
+feature importance:                                               
+                              column  importance                  
+2  debug_word2vec_cityblock_distance        1674
+1  debug_word2vec_euclidean_distance        1659
+0     debug_word2vec_cosine_distance        1427
+Valid Loss and AUC: 0.469321 0.569803                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.546587                                              
+----->finished 'cal valid qauc' block, time used:33.58s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.546646                                               
+----->finished 'cal test qauc' block, time used:44.91s.           
+Saved test results to /home/kesci/work/outputs/test/lgb_gbdt_nd_qauc0.546587_loss0.469321_std0.000466_0731234451.npy
+100%|██████████| 5/5 [07:31<00:00, 90.07s/it, best loss: 0.469227]

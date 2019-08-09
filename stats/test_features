@@ -1,0 +1,581 @@
+## tfidf+word2vec+len:
+
+{                                                  
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 12.0,
+ "feature_fraction": 0.8,
+ "lambda_l1": 0.4,
+ "lambda_l2": 4.0,
+ "learning_rate": 0.17,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "min_gain_to_split": 0.2,
+ "num_iterations": 100.0,
+ "num_leaves": 30.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.4633                
+[100]	valid's binary_logloss: 0.463356             
+混淆矩阵：                                              
+[[245404     63]                                   
+ [ 54439     94]]
+feature importance:                                
+                                               column  importance
+16                debug_trainWord2vec_cosine_distance         253
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         210
+17             debug_trainWord2vec_euclidean_distance         194
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         192
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         181
+18             debug_trainWord2vec_cityblock_distance         170
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         155
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         148
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         134
+5                    debug_trainTextMining_text_qtMin         127
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         125
+0                     debug_trainTextMining_text_qLen         120
+6                   debug_trainTextMining_text_qtDiff         107
+1                     debug_trainTextMining_text_tLen          92
+2               debug_trainTextMining_text_qtLenRatio          90
+7                    debug_trainTextMining_text_qtAvg          89
+3               debug_trainTextMining_text_tqLenRatio          84
+15               debug_trainTextMining_unigrams_qtAvg          74
+4                    debug_trainTextMining_text_qtMax          61
+10          debug_trainTextMining_unigrams_qtLenRatio          54
+14              debug_trainTextMining_unigrams_qtDiff          52
+11          debug_trainTextMining_unigrams_tqLenRatio          48
+9                 debug_trainTextMining_unigrams_tLen          46
+12               debug_trainTextMining_unigrams_qtMax          36
+8                 debug_trainTextMining_unigrams_qLen          31
+13               debug_trainTextMining_unigrams_qtMin          22
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           3
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           2
+Valid Loss and AUC: 0.463834 0.604806              
+----->started 'cal valid qauc' block...            
+Valid QAUC: 0.572603                               
+----->finished 'cal valid qauc' block, time used:33.92s.
+----->started 'cal test qauc' block...             
+Test QAUC: 0.57023                                 
+----->finished 'cal test qauc' block, time used:45.29s.
+{                                                                 
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 8.0,
+ "feature_fraction": 0.8,
+ "lambda_l1": 0.1,
+ "lambda_l2": 4.0,
+ "learning_rate": 0.11,
+ "max_bin": 255,
+ "min_data_in_leaf": 20.0,
+ "min_gain_to_split": 0.2,
+ "num_iterations": 160.0,
+ "num_leaves": 50.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.463249                             
+[100]	valid's binary_logloss: 0.463174                            
+[150]	valid's binary_logloss: 0.463325                            
+混淆矩阵：                                                             
+[[245407     60]                                                  
+ [ 54431    102]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         738
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         649
+17             debug_trainWord2vec_euclidean_distance         570
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         518
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         510
+18             debug_trainWord2vec_cityblock_distance         510
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         504
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         438
+7                    debug_trainTextMining_text_qtAvg         332
+2               debug_trainTextMining_text_qtLenRatio         313
+3               debug_trainTextMining_text_tqLenRatio         299
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         288
+6                   debug_trainTextMining_text_qtDiff         280
+0                     debug_trainTextMining_text_qLen         277
+1                     debug_trainTextMining_text_tLen         245
+5                    debug_trainTextMining_text_qtMin         236
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         208
+4                    debug_trainTextMining_text_qtMax         181
+10          debug_trainTextMining_unigrams_qtLenRatio         142
+15               debug_trainTextMining_unigrams_qtAvg         119
+11          debug_trainTextMining_unigrams_tqLenRatio         115
+12               debug_trainTextMining_unigrams_qtMax          91
+14              debug_trainTextMining_unigrams_qtDiff          91
+9                 debug_trainTextMining_unigrams_tLen          90
+8                 debug_trainTextMining_unigrams_qLen          51
+13               debug_trainTextMining_unigrams_qtMin          39
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           5
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           1
+Valid Loss and AUC: 0.463687 0.604712                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.571927                                              
+----->finished 'cal valid qauc' block, time used:33.68s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.572222                                               
+----->finished 'cal test qauc' block, time used:45.12s.           
+{                                                                 
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 10.0,
+ "feature_fraction": 0.7000000000000001,
+ "lambda_l1": 0.2,
+ "lambda_l2": 4.0,
+ "learning_rate": 0.13,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "min_gain_to_split": 0.6000000000000001,
+ "num_iterations": 200.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.463265                             
+[100]	valid's binary_logloss: 0.463169                            
+[150]	valid's binary_logloss: 0.463343                            
+[200]	valid's binary_logloss: 0.463412                            
+混淆矩阵：                                                             
+[[245379     88]                                                  
+ [ 54418    115]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         554
+17             debug_trainWord2vec_euclidean_distance         447
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         443
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         433
+18             debug_trainWord2vec_cityblock_distance         420
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         393
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         378
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         329
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         290
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         290
+5                    debug_trainTextMining_text_qtMin         267
+6                   debug_trainTextMining_text_qtDiff         267
+7                    debug_trainTextMining_text_qtAvg         256
+0                     debug_trainTextMining_text_qLen         250
+1                     debug_trainTextMining_text_tLen         231
+2               debug_trainTextMining_text_qtLenRatio         228
+3               debug_trainTextMining_text_tqLenRatio         217
+4                    debug_trainTextMining_text_qtMax         187
+10          debug_trainTextMining_unigrams_qtLenRatio         181
+15               debug_trainTextMining_unigrams_qtAvg         156
+11          debug_trainTextMining_unigrams_tqLenRatio         138
+9                 debug_trainTextMining_unigrams_tLen         113
+14              debug_trainTextMining_unigrams_qtDiff         105
+12               debug_trainTextMining_unigrams_qtMax         104
+8                 debug_trainTextMining_unigrams_qLen          66
+13               debug_trainTextMining_unigrams_qtMin          43
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           7
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           7
+Valid Loss and AUC: 0.463607 0.604947                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.572143                                              
+----->finished 'cal valid qauc' block, time used:33.76s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.573473                                               
+----->finished 'cal test qauc' block, time used:44.94s.           
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 8.0,
+ "feature_fraction": 0.9,
+ "lambda_l1": 1.0,
+ "lambda_l2": 6.0,
+ "learning_rate": 0.16,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "min_gain_to_split": 0.1,
+ "num_iterations": 160.0,
+ "num_leaves": 30.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.463115                             
+[100]	valid's binary_logloss: 0.463101                            
+[150]	valid's binary_logloss: 0.463124                            
+混淆矩阵：                                                             
+[[245397     70]                                                  
+ [ 54437     96]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         431
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         358
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         325
+17             debug_trainWord2vec_euclidean_distance         287
+18             debug_trainWord2vec_cityblock_distance         282
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         281
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         277
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         238
+0                     debug_trainTextMining_text_qLen         202
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         187
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         186
+5                    debug_trainTextMining_text_qtMin         185
+6                   debug_trainTextMining_text_qtDiff         183
+7                    debug_trainTextMining_text_qtAvg         168
+3               debug_trainTextMining_text_tqLenRatio         151
+2               debug_trainTextMining_text_qtLenRatio         141
+1                     debug_trainTextMining_text_tLen         114
+15               debug_trainTextMining_unigrams_qtAvg         100
+4                    debug_trainTextMining_text_qtMax          96
+10          debug_trainTextMining_unigrams_qtLenRatio          89
+14              debug_trainTextMining_unigrams_qtDiff          82
+11          debug_trainTextMining_unigrams_tqLenRatio          68
+12               debug_trainTextMining_unigrams_qtMax          67
+9                 debug_trainTextMining_unigrams_tLen          65
+13               debug_trainTextMining_unigrams_qtMin          39
+8                 debug_trainTextMining_unigrams_qLen          31
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           4
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           3
+Valid Loss and AUC: 0.463466 0.605855                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.573991                                              
+----->finished 'cal valid qauc' block, time used:33.72s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.571866                                               
+----->finished 'cal test qauc' block, time used:45.08s.           
+{                                                                 
+ "bagging_fraction": 1.0,
+ "bagging_freq": 20.0,
+ "feature_fraction": 1.0,
+ "lambda_l1": 0.8,
+ "lambda_l2": 2.0,
+ "learning_rate": 0.18,
+ "max_bin": 255,
+ "min_data_in_leaf": 50.0,
+ "min_gain_to_split": 0.9,
+ "num_iterations": 140.0,
+ "num_leaves": 45.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.463226                             
+[100]	valid's binary_logloss: 0.463346                            
+混淆矩阵：                                                             
+[[245390     77]                                                  
+ [ 54420    113]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         666
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         622
+17             debug_trainWord2vec_euclidean_distance         522
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         445
+18             debug_trainWord2vec_cityblock_distance         441
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         421
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         417
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         373
+3               debug_trainTextMining_text_tqLenRatio         263
+2               debug_trainTextMining_text_qtLenRatio         237
+6                   debug_trainTextMining_text_qtDiff         217
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         196
+7                    debug_trainTextMining_text_qtAvg         180
+1                     debug_trainTextMining_text_tLen         180
+5                    debug_trainTextMining_text_qtMin         175
+0                     debug_trainTextMining_text_qLen         160
+10          debug_trainTextMining_unigrams_qtLenRatio         112
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         112
+15               debug_trainTextMining_unigrams_qtAvg          81
+11          debug_trainTextMining_unigrams_tqLenRatio          79
+4                    debug_trainTextMining_text_qtMax          67
+14              debug_trainTextMining_unigrams_qtDiff          66
+9                 debug_trainTextMining_unigrams_tLen          55
+12               debug_trainTextMining_unigrams_qtMax          33
+8                 debug_trainTextMining_unigrams_qLen          24
+13               debug_trainTextMining_unigrams_qtMin          15
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           1
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           0
+Valid Loss and AUC: 0.463602 0.604203                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.571378                                              
+----->finished 'cal valid qauc' block, time used:33.82s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.570213                                               
+----->finished 'cal test qauc' block, time used:45.44s.           
+100%|██████████| 5/5 [07:40<00:00, 91.23s/it, best loss: 0.463466]
+
+## tfidf+word2vec+len+normalWordshare
+
+{                                                  
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 12.0,
+ "feature_fraction": 0.7000000000000001,
+ "lambda_l1": 0.5,
+ "lambda_l2": 0.0,
+ "learning_rate": 0.18,
+ "max_bin": 255,
+ "min_data_in_leaf": 10.0,
+ "min_gain_to_split": 0.2,
+ "num_iterations": 100.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.462898              
+[100]	valid's binary_logloss: 0.463077             
+混淆矩阵：                                              
+[[245384     83]                                   
+ [ 54433    100]]
+feature importance:                                
+                                               column  importance
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         282
+16                debug_trainWord2vec_cosine_distance         277
+18             debug_trainWord2vec_cityblock_distance         273
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         268
+28    debug_trainTextMining_unigrams_wordShare_normal         255
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         240
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         221
+17             debug_trainWord2vec_euclidean_distance         221
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         220
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         152
+7                    debug_trainTextMining_text_qtAvg         141
+2               debug_trainTextMining_text_qtLenRatio         132
+1                     debug_trainTextMining_text_tLen         127
+3               debug_trainTextMining_text_tqLenRatio         126
+5                    debug_trainTextMining_text_qtMin         123
+6                   debug_trainTextMining_text_qtDiff         118
+4                    debug_trainTextMining_text_qtMax         118
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         106
+0                     debug_trainTextMining_text_qLen          99
+10          debug_trainTextMining_unigrams_qtLenRatio          78
+15               debug_trainTextMining_unigrams_qtAvg          69
+11          debug_trainTextMining_unigrams_tqLenRatio          59
+14              debug_trainTextMining_unigrams_qtDiff          56
+9                 debug_trainTextMining_unigrams_tLen          44
+12               debug_trainTextMining_unigrams_qtMax          38
+8                 debug_trainTextMining_unigrams_qLen          27
+13               debug_trainTextMining_unigrams_qtMin          25
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           4
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           1
+Valid Loss and AUC: 0.463423 0.606613              
+----->started 'cal valid qauc' block...            
+Valid QAUC: 0.573454                               
+----->finished 'cal valid qauc' block, time used:33.87s.
+----->started 'cal test qauc' block...             
+Test QAUC: 0.572551                                
+----->finished 'cal test qauc' block, time used:46.18s.
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 6.0,
+ "feature_fraction": 0.9,
+ "lambda_l1": 0.5,
+ "lambda_l2": 2.0,
+ "learning_rate": 0.12,
+ "max_bin": 63,
+ "min_data_in_leaf": 30.0,
+ "min_gain_to_split": 0.7000000000000001,
+ "num_iterations": 180.0,
+ "num_leaves": 40.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.462644                             
+[100]	valid's binary_logloss: 0.46252                             
+[150]	valid's binary_logloss: 0.462568                            
+混淆矩阵：                                                             
+[[245403     64]                                                  
+ [ 54429    104]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         625
+28    debug_trainTextMining_unigrams_wordShare_normal         533
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         492
+18             debug_trainWord2vec_cityblock_distance         428
+17             debug_trainWord2vec_euclidean_distance         398
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         391
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         377
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         373
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         318
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         287
+6                   debug_trainTextMining_text_qtDiff         274
+0                     debug_trainTextMining_text_qLen         272
+7                    debug_trainTextMining_text_qtAvg         259
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         231
+5                    debug_trainTextMining_text_qtMin         231
+3               debug_trainTextMining_text_tqLenRatio         217
+1                     debug_trainTextMining_text_tLen         206
+2               debug_trainTextMining_text_qtLenRatio         189
+4                    debug_trainTextMining_text_qtMax         173
+15               debug_trainTextMining_unigrams_qtAvg         133
+11          debug_trainTextMining_unigrams_tqLenRatio         118
+10          debug_trainTextMining_unigrams_qtLenRatio         113
+14              debug_trainTextMining_unigrams_qtDiff         108
+9                 debug_trainTextMining_unigrams_tLen          98
+12               debug_trainTextMining_unigrams_qtMax          89
+8                 debug_trainTextMining_unigrams_qLen          41
+13               debug_trainTextMining_unigrams_qtMin          38
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           4
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           4
+Valid Loss and AUC: 0.463033 0.608302                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.575265                                              
+----->finished 'cal valid qauc' block, time used:33.76s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.573927                                               
+----->finished 'cal test qauc' block, time used:46.28s.           
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 10.0,
+ "feature_fraction": 0.9,
+ "lambda_l1": 0.4,
+ "lambda_l2": 2.0,
+ "learning_rate": 0.17,
+ "max_bin": 255,
+ "min_data_in_leaf": 40.0,
+ "min_gain_to_split": 0.8,
+ "num_iterations": 160.0,
+ "num_leaves": 25.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.462701                             
+[100]	valid's binary_logloss: 0.462603                            
+[150]	valid's binary_logloss: 0.462629                            
+混淆矩阵：                                                             
+[[245390     77]                                                  
+ [ 54416    117]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         345
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         336
+28    debug_trainTextMining_unigrams_wordShare_normal         273
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         247
+17             debug_trainWord2vec_euclidean_distance         238
+18             debug_trainWord2vec_cityblock_distance         236
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         228
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         218
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         210
+3               debug_trainTextMining_text_tqLenRatio         137
+7                    debug_trainTextMining_text_qtAvg         135
+5                    debug_trainTextMining_text_qtMin         133
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         130
+6                   debug_trainTextMining_text_qtDiff         128
+2               debug_trainTextMining_text_qtLenRatio         110
+1                     debug_trainTextMining_text_tLen         108
+0                     debug_trainTextMining_text_qLen          99
+4                    debug_trainTextMining_text_qtMax          95
+23           debug_trainVectorSpace_tfidfVecFeat_QLen          91
+10          debug_trainTextMining_unigrams_qtLenRatio          72
+11          debug_trainTextMining_unigrams_tqLenRatio          64
+15               debug_trainTextMining_unigrams_qtAvg          48
+14              debug_trainTextMining_unigrams_qtDiff          47
+9                 debug_trainTextMining_unigrams_tLen          42
+12               debug_trainTextMining_unigrams_qtMax          29
+13               debug_trainTextMining_unigrams_qtMin          22
+8                 debug_trainTextMining_unigrams_qLen          18
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           1
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           0
+Valid Loss and AUC: 0.463053 0.608129                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.576446                                              
+----->finished 'cal valid qauc' block, time used:33.84s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.573238                                               
+----->finished 'cal test qauc' block, time used:45.35s.           
+{                                                                 
+ "bagging_fraction": 0.7000000000000001,
+ "bagging_freq": 6.0,
+ "feature_fraction": 0.9,
+ "lambda_l1": 0.4,
+ "lambda_l2": 0.0,
+ "learning_rate": 0.13,
+ "max_bin": 63,
+ "min_data_in_leaf": 40.0,
+ "min_gain_to_split": 0.8,
+ "num_iterations": 200.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.462741                             
+[100]	valid's binary_logloss: 0.462594                            
+[150]	valid's binary_logloss: 0.462748                            
+[200]	valid's binary_logloss: 0.462901                            
+混淆矩阵：                                                             
+[[245381     86]                                                  
+ [ 54421    112]]
+feature importance:                                               
+                                               column  importance 
+16                debug_trainWord2vec_cosine_distance         573
+28    debug_trainTextMining_unigrams_wordShare_normal         492
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         441
+18             debug_trainWord2vec_cityblock_distance         418
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         393
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         351
+17             debug_trainWord2vec_euclidean_distance         342
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         326
+6                   debug_trainTextMining_text_qtDiff         320
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         310
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         289
+0                     debug_trainTextMining_text_qLen         252
+7                    debug_trainTextMining_text_qtAvg         243
+5                    debug_trainTextMining_text_qtMin         241
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         235
+1                     debug_trainTextMining_text_tLen         229
+3               debug_trainTextMining_text_tqLenRatio         218
+4                    debug_trainTextMining_text_qtMax         181
+2               debug_trainTextMining_text_qtLenRatio         179
+10          debug_trainTextMining_unigrams_qtLenRatio         142
+14              debug_trainTextMining_unigrams_qtDiff         115
+11          debug_trainTextMining_unigrams_tqLenRatio         115
+15               debug_trainTextMining_unigrams_qtAvg         115
+12               debug_trainTextMining_unigrams_qtMax         100
+9                 debug_trainTextMining_unigrams_tLen          78
+8                 debug_trainTextMining_unigrams_qLen          45
+13               debug_trainTextMining_unigrams_qtMin          43
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           9
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           5
+Valid Loss and AUC: 0.463095 0.607299                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.574907                                              
+----->finished 'cal valid qauc' block, time used:33.87s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.572976                                               
+----->finished 'cal test qauc' block, time used:45.45s.           
+{                                                                 
+ "bagging_fraction": 0.9,
+ "bagging_freq": 18.0,
+ "feature_fraction": 1.0,
+ "lambda_l1": 0.1,
+ "lambda_l2": 2.0,
+ "learning_rate": 0.1,
+ "max_bin": 255,
+ "min_data_in_leaf": 20.0,
+ "min_gain_to_split": 0.4,
+ "num_iterations": 160.0,
+ "num_leaves": 35.0,
+ "num_threads": 10
+}
+[50]	valid's binary_logloss: 0.462833                             
+[100]	valid's binary_logloss: 0.462533                            
+[150]	valid's binary_logloss: 0.462484                            
+混淆矩阵：                                                             
+[[245414     53]                                                  
+ [ 54432    101]]
+feature importance:                                               
+                                               column  importance 
+19           debug_trainVectorSpace_tfidfVecFeat_QSum         512
+16                debug_trainWord2vec_cosine_distance         511
+28    debug_trainTextMining_unigrams_wordShare_normal         416
+17             debug_trainWord2vec_euclidean_distance         391
+18             debug_trainWord2vec_cityblock_distance         331
+25  debug_trainVectorSpace_tfidfVecFeat_paired_cos...         324
+26  debug_trainVectorSpace_tfidfVecFeat_paired_euc...         317
+27  debug_trainVectorSpace_tfidfVecFeat_paired_man...         288
+20           debug_trainVectorSpace_tfidfVecFeat_TSum         288
+24           debug_trainVectorSpace_tfidfVecFeat_TLen         209
+7                    debug_trainTextMining_text_qtAvg         184
+5                    debug_trainTextMining_text_qtMin         183
+3               debug_trainTextMining_text_tqLenRatio         181
+6                   debug_trainTextMining_text_qtDiff         179
+0                     debug_trainTextMining_text_qLen         165
+2               debug_trainTextMining_text_qtLenRatio         161
+1                     debug_trainTextMining_text_tLen         130
+4                    debug_trainTextMining_text_qtMax         112
+23           debug_trainVectorSpace_tfidfVecFeat_QLen         109
+15               debug_trainTextMining_unigrams_qtAvg          84
+11          debug_trainTextMining_unigrams_tqLenRatio          76
+10          debug_trainTextMining_unigrams_qtLenRatio          74
+14              debug_trainTextMining_unigrams_qtDiff          65
+9                 debug_trainTextMining_unigrams_tLen          53
+8                 debug_trainTextMining_unigrams_qLen          40
+12               debug_trainTextMining_unigrams_qtMax          37
+13               debug_trainTextMining_unigrams_qtMin          19
+22          debug_trainVectorSpace_tfidfVecFeat_TMean           1
+21          debug_trainVectorSpace_tfidfVecFeat_QMean           0
+Valid Loss and AUC: 0.463231 0.608776                             
+----->started 'cal valid qauc' block...                           
+Valid QAUC: 0.577142                                              
+----->finished 'cal valid qauc' block, time used:33.87s.          
+----->started 'cal test qauc' block...                            
+Test QAUC: 0.574868                                               
+----->finished 'cal test qauc' block, time used:45.25s.           
+100%|██████████| 5/5 [07:50<00:00, 93.76s/it, best loss: 0.463033]
